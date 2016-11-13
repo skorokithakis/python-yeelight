@@ -73,8 +73,8 @@ class Bulb(object):
         """
         Ensure that the bulb is on.
 
-        :param bool auto_on:    If auto_on is True, the bulb is turned on if off
-                                before sending a command. If False, an
+        :param bool auto_on:    If auto_on is True, the bulb is turned on if
+                                off before sending a command. If False, an
                                 exception will be raised instead.
         :raises AssertionError: if the bulb is off and ``auto_on`` is False.
         """

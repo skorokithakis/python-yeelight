@@ -2,9 +2,6 @@ import os
 import sys
 import unittest
 import pep8
-from collections import defaultdict
-
-from uuid import UUID, uuid4
 
 sys.path.insert(0, os.path.abspath(__file__ + "/../.."))
 

@@ -11,7 +11,8 @@ package = 'yeelight'
 project = "python-yeelight"
 project_no_spaces = project.replace(' ', '')
 version = __version__
-description = ("yeelight is a Python library for controlling YeeLight WiFi RGB LED bulbs.")
+description = ("yeelight is a Python library for controlling YeeLight WiFi RGB"
+               " LED bulbs.")
 authors = ['Stavros Korokithakis']
 authors_string = ', '.join(authors)
 emails = ['hi@stavros.io']

@@ -1,3 +1,3 @@
-from yeelight.main import Bulb
+from yeelight.main import Bulb  # noqa
 
 __version__ = '0.0.4'
