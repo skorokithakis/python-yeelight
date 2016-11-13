@@ -107,6 +107,13 @@ each call::
     # This will turn the bulb on immediately:
     >>> bulb.turn_on(effect="sudden")
 
+    # You can easily change the default effect, too:
+    >>> bulb.effect = "sudden"
+
+    # This will turn the bulb off immediately:
+    >>> bulb.turn_on()
+
+
 There are two effect types, ``"sudden"`` and ``"smooth"``. The ``"sudden"`` type
 ignores the ``duration`` parameter.
 

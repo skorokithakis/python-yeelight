@@ -2,6 +2,13 @@
 Description
 ===========
 
+.. image:: https://img.shields.io/pypi/v/yeelight.svg
+        :target: https://pypi.python.org/pypi/yeelight
+
+.. image:: https://readthedocs.org/projects/yeelight/badge/?version=latest
+         :target: http://yeelight.readthedocs.io/en/latest/?badge=latest
+         :alt: Documentation Status
+
 ``yeelight`` is a simple library that allows you to control YeeLight WiFi RGB
 LED bulbs through your LAN.
 
