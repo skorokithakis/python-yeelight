@@ -33,7 +33,7 @@ Afterwards, instantiate a bulb::
 That's it!
 
 The entire specification for the bulb's protocol is `available online
-http://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf`_.
+<http://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf>`_.
 
 
 License
