@@ -135,16 +135,16 @@ class Bulb(object):
         return response
 
     @_command
-    def set_color_temp(self, temperature):
+    def set_color_temp(self, degrees):
         """
         Set the bulb's color temperature.
 
-        :param int temperature: The color temperature to set (1700-6500).
+        :param int degrees: The degrees of color temperature to set (1700-6500).
         """
         self._ensure_on()
 
-        temperature = max(1700, min(6500, temperature))
-        return "set_ct_abx", [temperature]
+        degrees = max(1700, min(6500, degrees))
+        return "set_ct_abx", [degrees]
 
     @_command
     def set_rgb(self, red, green, blue):
