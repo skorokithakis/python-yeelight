@@ -2,14 +2,12 @@
 
 import sys
 from yeelight import __version__
-assert sys.version >= '2.5', "Requires Python v2.5 or above."
+assert sys.version >= '2.7', "Requires Python v2.7 or above."
 from setuptools import setup
 
 classifiers = [
     "License :: OSI Approved :: BSD License",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 2.5",
-    "Programming Language :: Python :: 2.6",
     "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3.2",
     "Programming Language :: Python :: 3.3",

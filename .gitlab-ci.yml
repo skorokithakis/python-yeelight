@@ -1,0 +1,7 @@
+image: themattrix/tox
+before_script:
+  - pip install -U pip tox
+
+catt:
+  script:
+  - tox
