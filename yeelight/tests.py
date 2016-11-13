@@ -1,0 +1,27 @@
+import os
+import sys
+import unittest
+import pep8
+from collections import defaultdict
+
+from uuid import UUID, uuid4
+
+sys.path.insert(0, os.path.abspath(__file__ + "/../.."))
+
+from yeelight.main import *  # noqa
+
+
+class Tests(unittest.TestCase):
+    def test_pep8(self):
+        pep8style = pep8.StyleGuide([['statistics', True],
+                                     ['show-sources', True],
+                                     ['repeat', True],
+                                     ['paths', [os.path.dirname(
+                                         os.path.abspath(__file__))]]],
+                                    parse_argv=False)
+        report = pep8style.check_files()
+        assert report.total_errors == 0
+
+
+if __name__ == '__main__':
+    unittest.main()
