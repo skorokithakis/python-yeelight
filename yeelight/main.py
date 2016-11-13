@@ -3,6 +3,7 @@ import socket
 
 from .decorator import decorator
 
+
 @decorator
 def _command(f, *args, **kw):
     """
@@ -73,8 +74,8 @@ class Bulb(object):
         Ensure that the bulb is on.
 
         :param bool auto_on:    If auto_on is True, the bulb is turned on if off
-                                before sending a command. If False, an exception
-                                will be raised instead.
+                                before sending a command. If False, an
+                                exception will be raised instead.
         :raises AssertionError: if the bulb is off and ``auto_on`` is False.
         """
         if self._last_properties.get("power") is None:
@@ -120,14 +121,19 @@ class Bulb(object):
             "params": params,
         }
 
-        self._socket.send(json.dumps(command) + "\r\n")
+        self._socket.send((json.dumps(command) + "\r\n").encode("utf8"))
 
         # The bulb will send us updates on its state in addition to responses,
         # so we want to make sure that we read until we see an actual response.
         response = None
         while response is None:
             data = self._socket.recv(16 * 1024)
-            lines = [json.loads(line) for line in data.split("\r\n") if line]
+            lines = [
+                json.loads(line.decode("utf8"))
+                for line in
+                data.split(b"\r\n")
+                if line
+            ]
             for line in lines:
                 if line.get("method") != "props":
                     # This is probably the response we want.
@@ -139,7 +145,8 @@ class Bulb(object):
         """
         Set the bulb's color temperature.
 
-        :param int degrees: The degrees of color temperature to set (1700-6500).
+        :param int degrees: The degrees to set the color temperature to
+                            (1700-6500).
         """
         self._ensure_on()
 
