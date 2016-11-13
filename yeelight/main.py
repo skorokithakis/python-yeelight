@@ -1,11 +1,44 @@
 import json
 import socket
-from functools import wraps
+
+from .decorator import decorator
+
+@decorator
+def _command(f, *args, **kw):
+    """
+    A decorator that wraps a function and enables effects.
+    """
+    self = args[0]
+    effect = kw.get("effect", self.effect)
+    duration = kw.get("duration", self.duration)
+
+    if "effect" in kw:
+        del kw["effect"]
+    if "duration" in kw:
+        del kw["duration"]
+
+    method, params = f(*args, **kw)
+    if method not in ["toggle", "set_default"]:
+        # Add the effect parameters.
+        params += [effect, duration]
+
+    self.send_command(method, params)
 
 
 class Bulb(object):
     def __init__(self, ip, port=55443, effect="smooth",
                  duration=300, auto_on=False):
+        """
+        The main controller class of a physical YeeLight bulb.
+
+        :param str ip:       The IP of the bulb.
+        :param int port:     The port to connect to on the bulb.
+        :param str effect:   The type of effect. Can be "smooth" or "sudden".
+        :param int duration: The duration of the effect, in milliseconds. The
+                             minimum is 30. This is ignored for sudden effects.
+        :param bool auto_on: Whether to turn the bulb on automatically before
+                             each operation, if it is off.
+        """
         self._ip = ip
         self._port = port
 
@@ -19,7 +52,11 @@ class Bulb(object):
 
     @property
     def _cmd_id(self):
-        "Return the next command ID and increment the counter."
+        """
+        Return the next command ID and increment the counter.
+
+        :rtype: int
+        """
         self.__cmd_id += 1
         return self.__cmd_id - 1
 
@@ -31,33 +68,14 @@ class Bulb(object):
             self.__socket.connect((self._ip, self._port))
         return self.__socket
 
-    def command(func):
-        """
-        A decorator that wraps a function and enables effects.
-        """
-        @wraps(func)
-        def with_effect(self, *args, **kwargs):
-            effect = kwargs.get("effect", self.effect)
-            duration = kwargs.get("duration", self.duration)
-
-            if "effect" in kwargs:
-                del kwargs["effect"]
-            if "duration" in kwargs:
-                del kwargs["duration"]
-
-            method, params = func(self, *args, **kwargs)
-            if method not in ["toggle", "set_default"]:
-                # Add the effect parameters.
-                params += [effect, duration]
-
-            self.send_command(method, params)
-        return with_effect
-
     def _ensure_on(self, auto_on=None):
         """
         Ensure that the bulb is on.
 
-        auto_on - If auto_on is True, the bulb is turned on if it is off.
+        :param bool auto_on:    If auto_on is True, the bulb is turned on if off
+                                before sending a command. If False, an exception
+                                will be raised instead.
+        :raises AssertionError: if the bulb is off and ``auto_on`` is False.
         """
         if self._last_properties.get("power") is None:
             self.get_properties()
@@ -73,6 +91,9 @@ class Bulb(object):
     def get_properties(self):
         """
         Retrieve the properties of the bulb.
+
+        :returns: A dictionary of param: value items.
+        :rtype: dict
         """
         requested_properties = [
             "power", "bright", "ct", "rgb", "hue", "sat",
@@ -87,6 +108,11 @@ class Bulb(object):
     def send_command(self, method, params=None):
         """
         Send a command to the bulb.
+
+        :param str method:  The name of the method to send.
+        :param list params: The list of parameters for the method.
+
+        :returns: The response from the bulb.
         """
         command = {
             "id": self._cmd_id,
@@ -103,28 +129,31 @@ class Bulb(object):
             data = self._socket.recv(16 * 1024)
             lines = [json.loads(line) for line in data.split("\r\n") if line]
             for line in lines:
-                if line.get("method") == "props":
-                    # If we got a notification, update our local state.
-                    self._last_properties.update(line["params"])
-                else:
-                    # Otherwise, it's probably the response we want.
+                if line.get("method") != "props":
+                    # This is probably the response we want.
                     response = line
         return response
 
-    @command
+    @_command
     def set_color_temp(self, temperature):
         """
         Set the bulb's color temperature.
+
+        :param int temperature: The color temperature to set (1700-6500).
         """
         self._ensure_on()
 
         temperature = max(1700, min(6500, temperature))
         return "set_ct_abx", [temperature]
 
-    @command
+    @_command
     def set_rgb(self, red, green, blue):
         """
         Set the bulb's RGB value.
+
+        :param int red: The red value to set (0-255).
+        :param int green: The green value to set (0-255).
+        :param int blue: The blue value to set (0-255).
         """
         self._ensure_on()
 
@@ -133,10 +162,13 @@ class Bulb(object):
         blue = max(0, min(255, blue))
         return "set_rgb", [red * 65536 + green * 256 + blue]
 
-    @command
+    @_command
     def set_hsv(self, hue, saturation):
         """
         Set the bulb's HSV value.
+
+        :param int hue:        The hue to set (0-359).
+        :param int saturation: The saturation to set (0-100).
         """
         self._ensure_on()
 
@@ -144,32 +176,34 @@ class Bulb(object):
         saturation = max(0, min(100, saturation))
         return "set_hsv", [hue, saturation]
 
-    @command
+    @_command
     def set_brightness(self, brightness):
         """
         Set the bulb's brightness.
+
+        :param int brightness: The brightness value to set (1-100).
         """
         self._ensure_on()
 
         brightness = max(1, min(100, brightness))
         return "set_bright", [brightness]
 
-    @command
+    @_command
     def turn_on(self):
         "Turn the bulb on."
         return "set_power", ["on"]
 
-    @command
+    @_command
     def turn_off(self):
         "Turn the bulb off."
         return "set_power", ["off"]
 
-    @command
+    @_command
     def toggle(self):
         "Toggle the bulb on or off."
         return "toggle", []
 
-    @command
+    @_command
     def set_default(self):
         "Set the bulb's current state as default."
         return "set_default", []

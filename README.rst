@@ -28,12 +28,12 @@ To use ``yeelight``, just import it in your project like so::
 Afterwards, instantiate a bulb::
 
     >>> bulb = Bulb("192.168.0.5")
-    >>> bulb.send_command("set_power", ["off", "smooth", 500])
+    >>> bulb.turn_on()
 
 That's it!
 
-The entire specification for the bulb's protocol is `available online
-<http://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf>`_.
+Refer to the rest of `the documentation
+<https://yeelight.readthedocs.io/>`_ for more details.
 
 
 License
