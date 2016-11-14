@@ -24,11 +24,11 @@ is rather counter-intuitive, so the ``yeelight`` library changes this to mean
 "number of loops". If you want to loop once, no matter how long your transition
 list, just specify 1. 0 means "loop forever".
 
-``action`` can be ``Flow.recover`` to return to the original state after this
-flow is stopped (either through the :py:meth:`stop_flow
+``action`` can be ``Flow.actions.recover`` to return to the original state after
+this flow is stopped (either through the :py:meth:`stop_flow
 <yeelight.Bulb.stop_flow>` method or just because the loop has stopped),
-``Flow.stay`` to just stay at the last state of the flow, or ``Flow.off`` to
-turn off afterwards.
+``Flow.actions.stay`` to just stay at the last state of the flow, or
+``Flow.actions.off`` to turn off afterwards.
 
 ``transitions`` is a list of transition instances. There are various transition
 classes available, which are detailed in the :ref:`API reference
@@ -79,7 +79,7 @@ We can cycle between colors forever like so::
     bulb.start_flow(flow)
 
 To stop the flow (and return to the previous state, because of the default
-``Flow.action.recover``, you can use :py:meth:`stop_flow
+``Flow.actions.recover`` ``action``, you can use :py:meth:`stop_flow
 <yeelight.Bulb.stop_flow>`::
 
     bulb.stop_flow()

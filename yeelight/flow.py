@@ -30,9 +30,9 @@ class Flow(object):
         :param int count: The number of times to run this flow (0 to run
                           forever).
         :param action action: The action to take after the flow stops. Can be
-                              ``flow.actions.recover`` to go back to the state
-                              before the flow, ``flow.actions.stay`` to stay at
-                              the last state, and ``flow.actions.off`` to turn
+                              ``Flow.actions.recover`` to go back to the state
+                              before the flow, ``Flow.actions.stay`` to stay at
+                              the last state, and ``Flow.actions.off`` to turn
                               off.
         :param list transitions: A list of :py:class:`FlowTransition
                                  <yeelight.FlowTransition>` instances that
