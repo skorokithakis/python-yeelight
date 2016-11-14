@@ -19,7 +19,7 @@ def _command(f, *args, **kw):
         del kw["duration"]
 
     method, params = f(*args, **kw)
-    if method not in ["toggle", "set_default"]:
+    if method not in ["toggle", "set_default", "set_name"]:
         # Add the effect parameters.
         params += [effect, duration]
 
@@ -214,3 +214,12 @@ class Bulb(object):
     def set_default(self):
         "Set the bulb's current state as default."
         return "set_default", []
+
+    @_command
+    def set_name(self, name):
+        """
+        Set the bulb's name.
+
+        :param str name: The string you want to set as the bulb's name.
+        """
+        return "set_name", [name]
