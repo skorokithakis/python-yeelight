@@ -1,3 +1,4 @@
+import colorsys
 from enum import Enum
 from itertools import chain
 
@@ -79,7 +80,7 @@ class RGBTransition(FlowTransition):
         :param int blue: The value of blue (0-255).
         :param int duration: The duration of the effect, in milliseconds. The
                              minimum is 50.
-        :param int brightness: The brightness value to set (1-100).
+        :param int brightness: The brightness value to transition to (1-100).
         """
         self.red = red
         self.green = green
@@ -100,6 +101,36 @@ class RGBTransition(FlowTransition):
         return red * 65536 + green * 256 + blue
 
 
+class HSVTransition(FlowTransition):
+    def __init__(self, hue, saturation, duration=300, brightness=100):
+        """
+        An HSV transition.
+
+        :param int hue: The color hue to transition to (0-359).
+        :param int saturation: The color saturation to transition to (0-100).
+        :param int duration: The duration of the effect, in milliseconds. The
+                             minimum is 50.
+        :param int brightness: The brightness value to transition to (1-100).
+        """
+        self.hue = hue
+        self.saturation = saturation
+
+        # The mode value the YeeLight protocol mandates.
+        self._mode = 1
+
+        self.duration = duration
+        self.brightness = brightness
+
+    @property
+    def _value(self):
+        """The YeeLight-compatible value for this transition."""
+        hue = max(0, min(359, self.hue)) / 359.0
+        saturation = max(0, min(100, self.saturation)) / 100.0
+
+        red, green, blue = [int(col * 255) for col in colorsys.hsv_to_rgb(hue, saturation, 1)]
+        return red * 65536 + green * 256 + blue
+
+
 class TemperatureTransition(FlowTransition):
     def __init__(self, degrees, duration=300, brightness=100):
         """
@@ -109,7 +140,7 @@ class TemperatureTransition(FlowTransition):
                             (1700-6500).
         :param int duration: The duration of the effect, in milliseconds. The
                              minimum is 50.
-        :param int brightness: The brightness value to set (1-100).
+        :param int brightness: The brightness value to transition to (1-100).
         """
         self.degrees = degrees
 

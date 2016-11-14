@@ -30,6 +30,11 @@ flow is stopped (either through the :py:meth:`stop_flow
 ``Flow.stay`` to just stay at the last state of the flow, or ``Flow.off`` to
 turn off afterwards.
 
+``transitions`` is a list of transition instances. There are various transition
+classes available, which are detailed in the :ref:`API reference
+<flow-objects>`. The bulbs seem to be limited to around nine transitions (any
+more will produce an "invalid command" error).
+
 Let's see a few examples.
 
 
@@ -63,11 +68,6 @@ We can cycle between colors forever like so::
 
     from yeelight import *
     transitions = [
-        RGBTransition(255, 0, 0, duration=1000),
-        RGBTransition(255, 255, 0, duration=1000),
-        RGBTransition(0, 255, 0, duration=1000),
-        RGBTransition(0, 255, 255, duration=1000),
-        RGBTransition(0, 0, 255, duration=1000),
         RGBTransition(255, 0, 255, duration=1000)
     ]
 
@@ -93,10 +93,8 @@ quick pulse. For example, to pulse the bulb green twice when there is a WhatsApp
 message and return, we can do::
 
     from yeelight import *
-    transitions = [
-        RGBTransition(37, 211, 102, duration=300, brightness=1),
-        RGBTransition(37, 211, 102, duration=300),
-    ]
+    transitions = [HSVTransition(hue, 100, duration=500)
+                   for hue in range(0, 359, 40)]
 
     flow = Flow(
         count=2,

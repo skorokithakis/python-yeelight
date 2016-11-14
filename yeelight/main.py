@@ -132,13 +132,15 @@ class Bulb(object):
         response = None
         while response is None:
             data = self._socket.recv(16 * 1024)
-            lines = [
-                json.loads(line.decode("utf8"))
-                for line in
-                data.split(b"\r\n")
-                if line
-            ]
-            for line in lines:
+            for line in data.split(b"\r\n"):
+                if not line:
+                    continue
+
+                try:
+                    line = json.loads(line.decode("utf8"))
+                except ValueError:
+                    line = {"result": ["invalid command"]}
+
                 if line.get("method") != "props":
                     # This is probably the response we want.
                     response = line

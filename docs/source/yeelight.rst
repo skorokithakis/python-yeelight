@@ -13,10 +13,17 @@ yeelight module
     :undoc-members:
 
 
+.. _flow-objects:
+
 Flow objects
 ------------
 
 .. autoclass:: yeelight.Flow
+    :members:
+    :undoc-members:
+
+
+.. autoclass:: yeelight.HSVTransition
     :members:
     :undoc-members:
 
