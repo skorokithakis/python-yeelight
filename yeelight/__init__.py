@@ -6,5 +6,3 @@ from yeelight.flow import (
         TemperatureTransition,
         SleepTransition
 )
-
-__version__ = '0.0.6'

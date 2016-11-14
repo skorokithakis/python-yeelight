@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys
-from yeelight import __version__
+from yeelight.version import __version__
 assert sys.version >= '2.7', "Requires Python v2.7 or above."
 from setuptools import setup
 
