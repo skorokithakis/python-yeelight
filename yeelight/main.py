@@ -1,6 +1,7 @@
 import json
 import socket
 
+from .flow import Flow
 from .decorator import decorator
 
 
@@ -20,7 +21,7 @@ def _command(f, *args, **kw):
 
     method, params = f(*args, **kw)
     if method not in ["toggle", "set_default", "set_name", "cron_add",
-                      "cron_get", "cron_del"]:
+                      "cron_get", "cron_del", "start_cf", "stop_cf"]:
         # Add the effect parameters.
         params += [effect, duration]
 
@@ -141,6 +142,7 @@ class Bulb(object):
                 if line.get("method") != "props":
                     # This is probably the response we want.
                     response = line
+
         return response
 
     @_command
@@ -228,9 +230,32 @@ class Bulb(object):
         return "set_name", [name]
 
     @_command
+    def start_flow(self, flow):
+        """
+        Start a flow.
+
+        :param yeelight.Flow flow: The Flow instance to start.
+        """
+        if not isinstance(flow, Flow):
+            raise ValueError("Argument is not a Flow instance.")
+
+        self._ensure_on()
+
+        return "start_cf", [flow.count * len(flow.transitions), flow.action.value, flow.expression]
+
+    @_command
+    def stop_flow(self):
+        """Stop a flow."""
+        return "stop_cf", []
+
+    @_command
     def cron_add(self, event_type, value):
         """
         Add an event to cron.
+
+        Example::
+
+        >>> bulb.cron_add(CronType.off, 10)
 
         :param yeelight.enums.CronType event_type: The type of event. Currently,
                                                    only ``CronType.off``.
@@ -250,7 +275,7 @@ class Bulb(object):
     @_command
     def cron_del(self, event_type):
         """
-        Add an event to cron.
+        Remove an event from cron.
 
         :param yeelight.enums.CronType event_type: The type of event. Currently,
                                                    only ``CronType.off``.

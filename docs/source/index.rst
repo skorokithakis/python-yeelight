@@ -58,6 +58,9 @@ After you have found your bulb's IP, it's time to instantiate a new
     # Save this setting as default.
     >>> bulb.set_default()
 
+For a complete list of the commands you can issue, see the :doc:`API reference
+<yeelight>`.
+
 By default, ``yeelight`` will refuse to make any changes to the bulb if it's
 off::
 
@@ -75,7 +78,7 @@ You can check the bulb's state by reading its properties::
      'flowing': u'0',
      'hue': u'300',
      'music_on': u'0',
-     'name': u'',
+     'name': u'My light',
      'power': u'off',
      'rgb': u'16737280',
      'sat': u'100'}
@@ -87,6 +90,9 @@ to ``True``::
 
     # Or, when instantiating:
     >>> bulb = Bulb("192.168.0.19", auto_on=True)
+
+
+For documentation of the Flow feature, see :doc:`flow`.
 
 
 Effects
@@ -126,4 +132,5 @@ name.
    :maxdepth: 2
 
    Home <self>
+   flow
    API documentation <yeelight>
