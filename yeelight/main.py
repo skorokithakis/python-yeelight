@@ -19,11 +19,14 @@ def _command(f, *args, **kw):
         del kw["duration"]
 
     method, params = f(*args, **kw)
-    if method not in ["toggle", "set_default", "set_name"]:
+    if method not in ["toggle", "set_default", "set_name", "cron_add",
+                      "cron_get", "cron_del"]:
         # Add the effect parameters.
         params += [effect, duration]
 
-    self.send_command(method, params)
+    result = self.send_command(method, params).get("result", [])
+    if result:
+        return result[0]
 
 
 class Bulb(object):
@@ -223,3 +226,33 @@ class Bulb(object):
         :param str name: The string you want to set as the bulb's name.
         """
         return "set_name", [name]
+
+    @_command
+    def cron_add(self, event_type, value):
+        """
+        Add an event to cron.
+
+        :param yeelight.enums.CronType event_type: The type of event. Currently,
+                                                   only ``CronType.off``.
+        """
+        return "cron_add", [event_type.value, value]
+
+    @_command
+    def cron_get(self, event_type):
+        """
+        Retrieve an event from cron.
+
+        :param yeelight.enums.CronType event_type: The type of event. Currently,
+                                                   only ``CronType.off``.
+        """
+        return "cron_get", [event_type.value]
+
+    @_command
+    def cron_del(self, event_type):
+        """
+        Add an event to cron.
+
+        :param yeelight.enums.CronType event_type: The type of event. Currently,
+                                                   only ``CronType.off``.
+        """
+        return "cron_del", [event_type.value]

@@ -11,3 +11,8 @@ yeelight.main module
     :members:
     :undoc-members:
     :show-inheritance:
+
+.. automodule:: yeelight.enums
+    :members:
+    :undoc-members:
+    :show-inheritance:
