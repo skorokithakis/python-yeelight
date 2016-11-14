@@ -5,8 +5,8 @@ Description
 .. image:: https://img.shields.io/pypi/v/yeelight.svg
         :target: https://pypi.python.org/pypi/yeelight
 
-.. image:: https://readthedocs.org/projects/yeelight/badge/?version=latest
-         :target: http://yeelight.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/yeelight/badge/?version=stable
+         :target: http://yeelight.readthedocs.io/en/stable/?badge=stable
          :alt: Documentation Status
 
 ``yeelight`` is a simple library that allows you to control YeeLight WiFi RGB
@@ -40,7 +40,7 @@ Afterwards, instantiate a bulb::
 That's it!
 
 Refer to the rest of `the documentation
-<https://yeelight.readthedocs.io/>`_ for more details.
+<https://yeelight.readthedocs.io/en/stable/>`_ for more details.
 
 
 License
