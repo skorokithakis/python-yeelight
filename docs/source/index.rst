@@ -10,8 +10,8 @@ YeeLight RGB LED bulbs over WiFi. The latest version can be found at:
 
 https://gitlab.com/stavros/python-yeelight
 
-There is also `yeecli, a command-line YeeLight utility
-<https://gitlab.com/stavros/yeecli/>`_ that uses this library.
+To see a real-world usage example, have a look at `yeecli, a command-line
+YeeLight utility <https://gitlab.com/stavros/yeecli/>`_ that uses this library.
 
 ``yeelight`` currently does not support some features of the `YeeLight API
 <http://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf>`_, such as
