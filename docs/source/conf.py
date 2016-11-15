@@ -53,6 +53,8 @@ master_doc = 'index'
 project = metadata.project
 copyright = metadata.copyright
 
+suppress_warnings = ['image.nonlocal_uri']
+
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
