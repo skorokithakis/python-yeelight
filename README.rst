@@ -2,6 +2,12 @@
 Description
 ===========
 
+.. image:: https://gitlab.com/stavros/python-yeelight/badges/master/build.svg
+        :target: https://gitlab.com/stavros/python-yeelight/commits/master
+
+.. image:: https://gitlab.com/stavros/python-yeelight/badges/master/coverage.svg
+        :target: https://gitlab.com/stavros/python-yeelight/commits/master
+
 .. image:: https://img.shields.io/pypi/v/yeelight.svg
         :target: https://pypi.python.org/pypi/yeelight
 
