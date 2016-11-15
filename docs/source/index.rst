@@ -56,7 +56,7 @@ After you have found your bulb's IP, it's time to instantiate a new
     >>> bulb.turn_on()
 
     # Turn the bulb off.
-    >>> bulb.turn_on()
+    >>> bulb.turn_off()
 
     # Toggle power.
     >>> bulb.toggle()
@@ -68,6 +68,9 @@ After you have found your bulb's IP, it's time to instantiate a new
     >>> bulb.set_rgb(255, 0, 0)
 
     # Set HSV value.
+    >>> bulb.set_hsv(320, 100, 50)
+
+    # Set hue and saturation, but keep value (brightness) the same.
     >>> bulb.set_hsv(320, 100)
 
     # Set color temperature.
