@@ -1,23 +1,81 @@
+import json
 import os
 import sys
 import unittest
-import pep8
 
 sys.path.insert(0, os.path.abspath(__file__ + "/../.."))
 
-from yeelight.main import *  # noqa
+from yeelight import Bulb  # noqa
+
+
+class SocketMock(object):
+    def __init__(self, received='{"id": 0, "result": ["ok"]}'):
+        self.received = received
+
+    def send(self, data):
+        self.sent = json.loads(data)
+
+    def recv(self, length):
+        return self.received
 
 
 class Tests(unittest.TestCase):
-    def test_pep8(self):
-        pep8style = pep8.StyleGuide([['statistics', True],
-                                     ['show-sources', True],
-                                     ['repeat', True],
-                                     ['paths', [os.path.dirname(
-                                         os.path.abspath(__file__))]]],
-                                    parse_argv=False)
-        report = pep8style.check_files()
-        assert report.total_errors == 0
+    def setUp(self):
+        self.socket = SocketMock()
+        self.bulb = Bulb(ip="", auto_on=True)
+        self.bulb._Bulb__socket = self.socket
+
+    def test_rgb1(self):
+        self.bulb.set_rgb(255, 255, 0)
+        self.assertEqual(self.socket.sent["params"], [16776960, 'smooth', 300])
+        self.assertEqual(self.socket.sent["method"], "set_rgb")
+
+    def test_rgb2(self):
+        self.bulb.effect = "sudden"
+        self.bulb.set_rgb(255, 255, 0)
+        self.assertEqual(self.socket.sent["params"], [16776960, 'sudden', 300])
+        self.assertEqual(self.socket.sent["method"], "set_rgb")
+
+    def test_rgb3(self):
+        self.bulb.set_rgb(255, 255, 0, effect="sudden")
+        self.assertEqual(self.socket.sent["params"], [16776960, 'sudden', 300])
+        self.assertEqual(self.socket.sent["method"], "set_rgb")
+
+    def test_toggle1(self):
+        self.bulb.toggle()
+        self.assertEqual(self.socket.sent["params"], [])
+        self.assertEqual(self.socket.sent["method"], "toggle")
+
+    def test_turn_off1(self):
+        self.bulb.turn_off()
+        self.assertEqual(self.socket.sent["params"], ["off", "smooth", 300])
+        self.assertEqual(self.socket.sent["method"], "set_power")
+
+    def test_turn_on1(self):
+        self.bulb.turn_on()
+        self.assertEqual(self.socket.sent["params"], ["on", "smooth", 300])
+        self.assertEqual(self.socket.sent["method"], "set_power")
+
+    def test_turn_on2(self):
+        self.bulb.effect = "sudden"
+        self.bulb.turn_on()
+        self.assertEqual(self.socket.sent["params"], ["on", "sudden", 300])
+        self.assertEqual(self.socket.sent["method"], "set_power")
+
+    def test_turn_on3(self):
+        self.bulb.turn_on(effect="sudden", duration=50)
+        self.assertEqual(self.socket.sent["params"], ["on", "sudden", 50])
+        self.assertEqual(self.socket.sent["method"], "set_power")
+
+    def test_color_temp1(self):
+        self.bulb.set_color_temp(1400)
+        self.assertEqual(self.socket.sent["params"], [1700, "smooth", 300])
+        self.assertEqual(self.socket.sent["method"], "set_ct_abx")
+
+    def test_color_temp2(self):
+        self.bulb.set_color_temp(8400, effect="sudden")
+        self.assertEqual(self.socket.sent["params"], [6500, "sudden", 300])
+        self.assertEqual(self.socket.sent["method"], "set_ct_abx")
 
 
 if __name__ == '__main__':

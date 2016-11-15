@@ -14,11 +14,6 @@ def _command(f, *args, **kw):
     effect = kw.get("effect", self.effect)
     duration = kw.get("duration", self.duration)
 
-    if "effect" in kw:
-        del kw["effect"]
-    if "duration" in kw:
-        del kw["duration"]
-
     method, params = f(*args, **kw)
     if method not in ["toggle", "set_default", "set_name", "cron_add",
                       "cron_get", "cron_del", "start_cf", "stop_cf"]:
@@ -148,7 +143,7 @@ class Bulb(object):
         return response
 
     @_command
-    def set_color_temp(self, degrees):
+    def set_color_temp(self, degrees, **kwargs):
         """
         Set the bulb's color temperature.
 
@@ -161,7 +156,7 @@ class Bulb(object):
         return "set_ct_abx", [degrees]
 
     @_command
-    def set_rgb(self, red, green, blue):
+    def set_rgb(self, red, green, blue, **kwargs):
         """
         Set the bulb's RGB value.
 
@@ -177,7 +172,7 @@ class Bulb(object):
         return "set_rgb", [red * 65536 + green * 256 + blue]
 
     @_command
-    def set_hsv(self, hue, saturation):
+    def set_hsv(self, hue, saturation, **kwargs):
         """
         Set the bulb's HSV value.
 
@@ -191,7 +186,7 @@ class Bulb(object):
         return "set_hsv", [hue, saturation]
 
     @_command
-    def set_brightness(self, brightness):
+    def set_brightness(self, brightness, **kwargs):
         """
         Set the bulb's brightness.
 
@@ -203,12 +198,12 @@ class Bulb(object):
         return "set_bright", [brightness]
 
     @_command
-    def turn_on(self):
+    def turn_on(self, **kwargs):
         "Turn the bulb on."
         return "set_power", ["on"]
 
     @_command
-    def turn_off(self):
+    def turn_off(self, **kwargs):
         "Turn the bulb off."
         return "set_power", ["off"]
 
