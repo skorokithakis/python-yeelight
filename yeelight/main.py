@@ -16,8 +16,8 @@ def _command(f, *args, **kw):
     duration = kw.get("duration", self.duration)
 
     method, params = f(*args, **kw)
-    if method not in ["toggle", "set_default", "set_name", "cron_add",
-                      "cron_get", "cron_del", "start_cf", "stop_cf"]:
+    if method in ["set_ct_abx", "set_rgb", "set_hsv", "set_bright",
+                  "set_power"]:
         # Add the effect parameters.
         params += [effect, duration]
 
@@ -171,6 +171,24 @@ class Bulb(object):
         green = max(0, min(255, green))
         blue = max(0, min(255, blue))
         return "set_rgb", [red * 65536 + green * 256 + blue]
+
+    @_command
+    def set_adjust(self, action, prop):
+        """
+        Adjust a parameter.
+
+        I don't know what this is good for. I don't know how to use it, or why.
+        I'm just including it here for completeness, and because it was easy,
+        but it won't get any particular love.
+
+        :param str action: The direction of adjustment. Can be "increase",
+                           "decrease" or "circle".
+        :param str prop:   The property to adjust. Can be "bright" for
+                           brightness, "ct" for color temperature and "color"
+                           for color. The only action for "color" can be
+                           "circle". Why? Who knows.
+        """
+        return "set_adjust", [action, prop]
 
     @_command
     def set_hsv(self, hue, saturation, value=None, **kwargs):
