@@ -9,11 +9,11 @@ from yeelight import Bulb  # noqa
 
 
 class SocketMock(object):
-    def __init__(self, received='{"id": 0, "result": ["ok"]}'):
+    def __init__(self, received=b'{"id": 0, "result": ["ok"]}'):
         self.received = received
 
     def send(self, data):
-        self.sent = json.loads(data)
+        self.sent = json.loads(data.decode("utf8"))
 
     def recv(self, length):
         return self.received
