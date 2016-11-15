@@ -30,5 +30,5 @@ setup(
     packages=["yeelight"],
     install_requires=['enum34'],
     test_suite='yeelight.tests',
-    tests_require=['flake8'],
+    tests_require=[],
 )
