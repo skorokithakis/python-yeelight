@@ -1,3 +1,4 @@
+import colorsys
 import json
 import socket
 
@@ -172,18 +173,39 @@ class Bulb(object):
         return "set_rgb", [red * 65536 + green * 256 + blue]
 
     @_command
-    def set_hsv(self, hue, saturation, **kwargs):
+    def set_hsv(self, hue, saturation, value=None, **kwargs):
         """
         Set the bulb's HSV value.
 
         :param int hue:        The hue to set (0-359).
         :param int saturation: The saturation to set (0-100).
+        :param int value:      The value to set (0-100). If omitted, the bulb's
+                               brightness will remain the same as before the
+                               change.
         """
         self._ensure_on()
 
+        # We fake this using flow so we can add the `value` parameter.
         hue = max(0, min(359, hue))
         saturation = max(0, min(100, saturation))
-        return "set_hsv", [hue, saturation]
+
+        if value is None:
+            # If no value was passed, use ``set_hsv`` to preserve luminance.
+            return "set_hsv", [hue, saturation]
+        else:
+            # Otherwise, use flow.
+            value = max(0, min(100, value))
+
+            if kwargs.get("effect", self.effect) == "sudden":
+                duration = 50
+            else:
+                duration = kwargs.get("duration", self.duration)
+
+            hue = max(0, min(359, hue)) / 359.0
+            saturation = max(0, min(100, saturation)) / 100.0
+            red, green, blue = [int(round(col * 255)) for col in colorsys.hsv_to_rgb(hue, saturation, 1)]
+            rgb = red * 65536 + green * 256 + blue
+            return "start_cf", [1, 1, "%s, 1, %s, %s" % (duration, rgb, value)]
 
     @_command
     def set_brightness(self, brightness, **kwargs):

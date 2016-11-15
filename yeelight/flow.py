@@ -127,7 +127,7 @@ class HSVTransition(FlowTransition):
         hue = max(0, min(359, self.hue)) / 359.0
         saturation = max(0, min(100, self.saturation)) / 100.0
 
-        red, green, blue = [int(col * 255) for col in colorsys.hsv_to_rgb(hue, saturation, 1)]
+        red, green, blue = [int(round(col * 255)) for col in colorsys.hsv_to_rgb(hue, saturation, 1)]
         return red * 65536 + green * 256 + blue
 
 
