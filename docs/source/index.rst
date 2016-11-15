@@ -129,7 +129,7 @@ There are two effect types, ``"sudden"`` and ``"smooth"``. The ``"sudden"`` type
 ignores the ``duration`` parameter.
 
 Keep in mind that the ``effect`` and ``duration`` parameters *must* be passed by
-name.
+keyword.
 
 
 .. toctree::
