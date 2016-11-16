@@ -39,8 +39,16 @@ class Bulb(object):
         :param str effect:   The type of effect. Can be "smooth" or "sudden".
         :param int duration: The duration of the effect, in milliseconds. The
                              minimum is 30. This is ignored for sudden effects.
-        :param bool auto_on: Whether to turn the bulb on automatically before
-                             each operation, if it is off.
+        :param bool auto_on: Whether to call :py:meth:`ensure_on()
+                             <yeelight.Bulb.ensure_on>` to turn the bulb on
+                             automatically before each operation, if it is off.
+                             This renews the properties of the bulb before each
+                             message, costing you one extra message per command.
+                             Turn this off and do your own checking with
+                             :py:meth:`get_properties()
+                             <yeelight.Bulb.get_properties()>` or run
+                             :py:meth:`ensure_on() <yeelight.Bulb.ensure_on>`
+                             yourself if you're worried about rate-limiting.
         """
         self._ip = ip
         self._port = port
@@ -73,32 +81,31 @@ class Bulb(object):
             self.__socket.connect((self._ip, self._port))
         return self.__socket
 
-    def _ensure_on(self, auto_on=None):
-        """
-        Ensure that the bulb is on.
-
-        :param bool auto_on:    If auto_on is True, the bulb is turned on if
-                                off before sending a command. If False, an
-                                exception will be raised instead.
-        :raises AssertionError: if the bulb is off and ``auto_on`` is False.
-        """
-        if self._music_mode:
+    def ensure_on(self):
+        """Turn the bulb on if it is off."""
+        if self._music_mode is True or self.auto_on is False:
             return
 
-        if self._last_properties.get("power") is None:
-            self.get_properties()
+        self.get_properties()
 
         if self._last_properties["power"] != "on":
-            auto_on = auto_on if auto_on is not None else self.auto_on
-            if auto_on:
-                self.turn_on()
-            else:
-                raise AssertionError("Commands have no effect when the bulb is"
-                                     " off.")
+            self.turn_on()
+
+    @property
+    def last_properties(self):
+        """
+        The last properties we've seen the bulb have.
+
+        This might potentially be out of date, as there's no background listener
+        for the bulb's notifications. To update it, call
+        :py:meth:`get_properties <yeelight.Bulb.get_properties()>`.
+        """
+        return self._last_properties
 
     def get_properties(self):
         """
-        Retrieve the properties of the bulb.
+        Retrieve and return the properties of the bulb, additionally updating
+        ``last_properties``.
 
         :returns: A dictionary of param: value items.
         :rtype: dict
@@ -158,6 +165,8 @@ class Bulb(object):
                 if line.get("method") != "props":
                     # This is probably the response we want.
                     response = line
+                else:
+                    self._last_properties.update(line["params"])
 
         return response
 
@@ -169,7 +178,7 @@ class Bulb(object):
         :param int degrees: The degrees to set the color temperature to
                             (1700-6500).
         """
-        self._ensure_on()
+        self.ensure_on()
 
         degrees = max(1700, min(6500, degrees))
         return "set_ct_abx", [degrees]
@@ -183,7 +192,7 @@ class Bulb(object):
         :param int green: The green value to set (0-255).
         :param int blue: The blue value to set (0-255).
         """
-        self._ensure_on()
+        self.ensure_on()
 
         red = max(0, min(255, red))
         green = max(0, min(255, green))
@@ -219,7 +228,7 @@ class Bulb(object):
                                brightness will remain the same as before the
                                change.
         """
-        self._ensure_on()
+        self.ensure_on()
 
         # We fake this using flow so we can add the `value` parameter.
         hue = max(0, min(359, hue))
@@ -250,7 +259,7 @@ class Bulb(object):
 
         :param int brightness: The brightness value to set (1-100).
         """
-        self._ensure_on()
+        self.ensure_on()
 
         brightness = max(1, min(100, brightness))
         return "set_bright", [brightness]
@@ -294,7 +303,7 @@ class Bulb(object):
         if not isinstance(flow, Flow):
             raise ValueError("Argument is not a Flow instance.")
 
-        self._ensure_on()
+        self.ensure_on()
 
         return "start_cf", [flow.count * len(flow.transitions), flow.action.value, flow.expression]
 

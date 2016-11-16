@@ -113,13 +113,16 @@ You can check the bulb's state by reading its properties::
      'sat': u'100'}
 
 If you want to always turn the bulb on before running a command, set ``auto_on``
-to ``True``::
+to ``True``. This will refresh the bulb's properties before most calls, and will
+cost you an extra message per command, so watch out for rate-limiting::
 
     >>> bulb.auto_on = True
 
     # Or, when instantiating:
     >>> bulb = Bulb("192.168.0.19", auto_on=True)
 
+    # This will work even if the bulb is off.
+    >>> bulb.set_brightness(10)
 
 For documentation of the Flow feature, see :doc:`flow`.
 
