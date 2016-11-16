@@ -128,7 +128,6 @@ class Bulb(object):
             "params": params,
         }
 
-        self._socket.send((json.dumps(command) + "\r\n").encode("utf8"))
         try:
             self._socket.send((json.dumps(command) + "\r\n").encode("utf8"))
         except socket.error:
