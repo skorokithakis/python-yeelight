@@ -28,7 +28,7 @@ YeeLight utility <https://gitlab.com/stavros/yeecli/>`_ that uses this library.
 
 ``yeelight`` currently does not support some features of the `YeeLight API
 <http://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf>`_, such as
-discovery or music mode, but is mostly otherwise complete.
+discovery, but is mostly otherwise complete.
 
 
 Installation
@@ -78,6 +78,14 @@ After you have found your bulb's IP, it's time to instantiate a new
 
     # Save this setting as default.
     >>> bulb.set_default()
+
+
+For efficiency, ``yeelight`` will use a single TCP connection for all the above
+commands. However, this means that, if there's an error, a command could raise
+a ``socket.error`` exception and need to be retried. Note that YeeLight
+connections are rate-limited to 60 per minute. If you need your connection to
+not have a limit, you need to use :py:meth:`Music mode
+<yeelight.Bulb.start_music>`.
 
 For a complete list of the commands you can issue, see the :doc:`API reference
 <yeelight>`.

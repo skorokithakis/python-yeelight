@@ -5,6 +5,8 @@ import socket
 from .flow import Flow
 from .decorator import decorator
 
+MUSIC_PORT = 37657
+
 
 @decorator
 def _command(f, *args, **kw):
@@ -47,9 +49,10 @@ class Bulb(object):
         self.duration = duration
         self.auto_on = auto_on
 
-        self.__cmd_id = 0
-        self._last_properties = {}
-        self.__socket = None
+        self.__cmd_id = 0           # The last command id we used.
+        self._last_properties = {}  # The last set of properties we've seen.
+        self._music_mode = False    # Whether we're currently in music mode.
+        self.__socket = None        # The socket we use to communicate.
 
     @property
     def _cmd_id(self):
@@ -66,6 +69,7 @@ class Bulb(object):
         "Return, optionally creating, the communication socket."
         if self.__socket is None:
             self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.__socket.settimeout(5)
             self.__socket.connect((self._ip, self._port))
         return self.__socket
 
@@ -78,6 +82,9 @@ class Bulb(object):
                                 exception will be raised instead.
         :raises AssertionError: if the bulb is off and ``auto_on`` is False.
         """
+        if self._music_mode:
+            return
+
         if self._last_properties.get("power") is None:
             self.get_properties()
 
@@ -122,6 +129,18 @@ class Bulb(object):
         }
 
         self._socket.send((json.dumps(command) + "\r\n").encode("utf8"))
+        try:
+            self._socket.send((json.dumps(command) + "\r\n").encode("utf8"))
+        except socket.error:
+            # Some error occurred, remove this socket in hopes that we can later
+            # create a new one.
+            self.__socket.close()
+            self.__socket = None
+            raise
+
+        if self._music_mode:
+            # We're in music mode, nothing else will happen.
+            return {"result": ["ok"]}
 
         # The bulb will send us updates on its state in addition to responses,
         # so we want to make sure that we read until we see an actual response.
@@ -284,6 +303,53 @@ class Bulb(object):
     def stop_flow(self):
         """Stop a flow."""
         return "stop_cf", []
+
+    def start_music(self):
+        """
+        Start music mode.
+
+        Music mode essentially upgrades the existing connection to a reverse one
+        (the bulb connects to the library), removing all limits and allowing you
+        to send commands without being rate-limited.
+
+        Starting music mode will start a new listening socket, tell the bulb to
+        connect to that, and then close the old connection. If the bulb cannot
+        connect to the host machine for any reason, bad things will happen (such
+        as library freezes).
+        """
+        if self._music_mode:
+            raise AssertionError("Already in music mode, please stop music mode first.")
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Reuse sockets so we don't hit "address already in use" errors.
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.bind(("", MUSIC_PORT))
+        s.listen(3)
+
+        local_ip = self._socket.getsockname()[0]
+        self.send_command("set_music", [1, local_ip, MUSIC_PORT])
+        s.settimeout(5)
+        conn, _ = s.accept()
+        s.close()  # Close the listening socket.
+        self.__socket.close()
+        self.__socket = conn
+        self._music_mode = True
+
+        return "ok"
+
+    @_command
+    def stop_music(self):
+        """
+        Stop music mode.
+
+        Stopping music mode will close the previous connection. Calling
+        ``stop_music`` more than once, or while not in music mode, is safe.
+        """
+        if self.__socket:
+            self.__socket.close()
+            self.__socket = None
+        self._music_mode = False
+        return "set_music", [0]
 
     @_command
     def cron_add(self, event_type, value):
