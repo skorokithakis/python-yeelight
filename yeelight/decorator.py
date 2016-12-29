@@ -1,4 +1,5 @@
 # #########################     LICENSE     ############################ #
+# flake8: noqa
 
 # Copyright (c) 2005-2016, Michele Simionato
 # All rights reserved.

@@ -2,8 +2,8 @@ import colorsys
 import json
 import socket
 
-from .flow import Flow
 from .decorator import decorator
+from .flow import Flow
 
 MUSIC_PORT = 37657
 
