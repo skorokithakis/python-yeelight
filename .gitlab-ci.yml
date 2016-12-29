@@ -7,13 +7,13 @@ stages:
 static_check:
   stage: static_check
   before_script:
-    - pip install flake8
+    - pip install -r requirements_dev.txt
   script:
     - flake8 .
 
 tests:
   stage: tests
   before_script:
-    - pip install tox
+    - pip install -r requirements_dev.txt
   script:
   - tox
