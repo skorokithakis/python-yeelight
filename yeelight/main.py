@@ -169,7 +169,7 @@ class Bulb(object):
         :param str method:  The name of the method to send.
         :param list params: The list of parameters for the method.
 
-        :raises BulbException: When bulb indicates error condition.
+        :raises BulbException: When the bulb indicates an error condition.
         :returns: The response from the bulb.
         """
         command = {
