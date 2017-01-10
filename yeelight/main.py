@@ -197,7 +197,12 @@ class Bulb(object):
         # so we want to make sure that we read until we see an actual response.
         response = None
         while response is None:
-            data = self._socket.recv(16 * 1024)
+            try:
+                data = self._socket.recv(16 * 1024)
+            except socket.error:
+                # Some error occured like above, let's close and try later again..
+                self.__socket.close()
+                self.__socket = None
             for line in data.split(b"\r\n"):
                 if not line:
                     continue
