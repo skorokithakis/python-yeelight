@@ -42,7 +42,7 @@ class BulbException(Exception):
 
 class BulbType(Enum):
     """
-    BulbType enum specifies bulb's type, either White or Color,
+    The BulbType enum specifies bulb's type, either White or Color,
     or Unknown if the properties have not been fetched yet.
     """
     Unknown = -1
@@ -157,7 +157,7 @@ class Bulb(object):
         ]
         response = self.send_command("get_prop", requested_properties)
         properties = response["result"]
-        properties = [None if x == '' else x for x in properties]
+        properties = [x if x else None for x in properties]
 
         self._last_properties = dict(zip(requested_properties, properties))
         return self._last_properties
@@ -169,7 +169,7 @@ class Bulb(object):
         :param str method:  The name of the method to send.
         :param list params: The list of parameters for the method.
 
-        :raises BulbException: on error response from the bulb
+        :raises BulbException: When bulb indicates error condition.
         :returns: The response from the bulb.
         """
         command = {
