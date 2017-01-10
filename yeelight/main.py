@@ -137,7 +137,7 @@ class Bulb(object):
         """
         if not self._last_properties:
             return BulbType.Unknown
-        if not any([self.last_properties[name] for name in ['ct', 'rgb', 'hue', 'sat']]):
+        if not all(name in self.last_properties for name in ['ct', 'rgb', 'hue', 'sat']):
             return BulbType.White
         else:
             return BulbType.Color
