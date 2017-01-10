@@ -1,12 +1,15 @@
 import colorsys
 import json
 import socket
+import logging
+from enum import Enum
 
 from .decorator import decorator
 from .flow import Flow
 
 MUSIC_PORT = 37657
 
+_LOGGER = logging.getLogger(__name__)
 
 @decorator
 def _command(f, *args, **kw):
@@ -26,6 +29,25 @@ def _command(f, *args, **kw):
     result = self.send_command(method, params).get("result", [])
     if result:
         return result[0]
+
+
+
+class BulbException(Exception):
+    """
+    The exception is raised when bulb informs about errors, e.g., when
+    trying to issue unsupported command on the bulb.
+    """
+    pass
+
+
+class BulbType(Enum):
+    """
+    The BulbType enum specifies bulb's type, either White or Color,
+    or Unknown if the properties have not been fetched yet.
+    """
+    Unknown = -1
+    White = 0
+    Color = 1
 
 
 class Bulb(object):
@@ -102,6 +124,24 @@ class Bulb(object):
         """
         return self._last_properties
 
+    @property
+    def bulb_type(self):
+        """
+        Returns BulbType :py:enum:`BulbType <yeelight.BulbType>` describing type
+        of the bulb. Currently this is Color or White.
+
+        When trying to access before properties are known, the bulb type is unknown.
+
+        :rtype: BulbType
+        :return: The bulb's type.
+        """
+        if not self._last_properties:
+            return BulbType.Unknown
+        if not all(name in self.last_properties for name in ['ct', 'rgb', 'hue', 'sat']):
+            return BulbType.White
+        else:
+            return BulbType.Color
+
     def get_properties(self):
         """
         Retrieve and return the properties of the bulb, additionally updating
@@ -117,6 +157,8 @@ class Bulb(object):
         ]
         response = self.send_command("get_prop", requested_properties)
         properties = response["result"]
+        properties = [x if x else None for x in properties]
+
         self._last_properties = dict(zip(requested_properties, properties))
         return self._last_properties
 
@@ -127,6 +169,7 @@ class Bulb(object):
         :param str method:  The name of the method to send.
         :param list params: The list of parameters for the method.
 
+        :raises BulbException: When the bulb indicates an error condition.
         :returns: The response from the bulb.
         """
         command = {
@@ -134,6 +177,8 @@ class Bulb(object):
             "method": method,
             "params": params,
         }
+
+        _LOGGER.debug("%s > %s", self, command)
 
         try:
             self._socket.send((json.dumps(command) + "\r\n").encode("utf8"))
@@ -152,13 +197,19 @@ class Bulb(object):
         # so we want to make sure that we read until we see an actual response.
         response = None
         while response is None:
-            data = self._socket.recv(16 * 1024)
+            try:
+                data = self._socket.recv(16 * 1024)
+            except socket.error:
+                # Some error occured like above, let's close and try later again..
+                self.__socket.close()
+                self.__socket = None
             for line in data.split(b"\r\n"):
                 if not line:
                     continue
 
                 try:
                     line = json.loads(line.decode("utf8"))
+                    _LOGGER.debug("%s < %s", self, line)
                 except ValueError:
                     line = {"result": ["invalid command"]}
 
@@ -167,6 +218,9 @@ class Bulb(object):
                     response = line
                 else:
                     self._last_properties.update(line["params"])
+
+        if "error" in response:
+            raise BulbException(response["error"])
 
         return response
 
@@ -392,3 +446,6 @@ class Bulb(object):
                                                    only ``CronType.off``.
         """
         return "cron_del", [event_type.value]
+
+    def __repr__(self):
+        return "Bulb<{ip}:{port}, type={type}>".format(ip=self._ip, port=self._port, type=self.bulb_type)
