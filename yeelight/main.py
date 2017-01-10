@@ -133,7 +133,7 @@ class Bulb(object):
         When trying to access before properties are known, the bulb type is unknown.
 
         :rtype: BulbType
-        :return: bulbs type
+        :return: The bulb's type.
         """
         if not self._last_properties:
             return BulbType.Unknown
