@@ -48,8 +48,8 @@ class Flow(object):
         self.transitions = transitions
 
         # Note, main depends on us, so we cannot import BulbException here.
-        if len(self.transitions) > 10:
-            _LOGGER.warning("More transactions (%s) than maximum of 10." % len(self.transitions))
+        if len(self.transitions) > 9:
+            _LOGGER.warning("The bulb seems to support up to 9 transitions. Your %s might fail." % len(self.transitions))
 
     @property
     def expression(self):
