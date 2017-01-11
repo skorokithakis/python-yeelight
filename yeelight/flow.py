@@ -73,10 +73,8 @@ class FlowTransition(object):
 
         :rtype: list
         """
+        brightness = min(int(self.brightness), 100)
         # Duration must be at least 50, otherwise there's an error.
-        brightness = int(min(self.brightness, 100))
-        if brightness != self.brightness:
-            _LOGGER.warning("Brightness was not between 0-100!")
         return [max(50, self.duration), self._mode, self._value, brightness]
 
 
