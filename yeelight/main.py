@@ -315,7 +315,7 @@ class Bulb(object):
         """
         self.ensure_on()
 
-        brightness = max(1, min(100, brightness))
+        brightness = int(max(1, min(100, brightness)))
         return "set_bright", [brightness]
 
     @_command
