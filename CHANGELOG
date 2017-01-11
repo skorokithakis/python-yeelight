@@ -1,0 +1,187 @@
+Changelog
+=========
+
+%%version%% (unreleased)
+------------------------
+
+Fix
+~~~
+
+- Make `ensure_on` more accurate by always fetching the properties
+  before a method call. [Stavros Korokithakis]
+
+Other
+~~~~~
+
+- Cast brightness to int as bulb doesn't accept floats (#2) [Teemu R]
+
+- Small changes to make bulb more downstream-friendly (#1) [Teemu R]
+
+  * Small changes to make bulb more downstream-friendly
+
+  This commit makes using the class much nicer for downstream by:
+  1. Non-existing properties are set to None instead of keeping them as ''.
+  2. Adds logger to allow enabling verbose messaging trace.
+  3. Bulb errors are raised as BulbExceptions, e.g., if user tries to set color on bulb not supporting the feature.
+  4. bulb_type allows distinguishing between color and white models.
+
+  * Small grammar fix.
+
+  * Wrap recv() similarly than the send, to avoid broken sockets caused by too much playing around I suppose.
+
+  * Fix PR reviews
+
+  * Small missing articles fix.
+
+  * Nicer check for "not any"
+
+- Fix style more. [Stavros Korokithakis]
+
+- Update .gitlab_ci.yml. [Stavros Korokithakis]
+
+- Add style info. [Stavros Korokithakis]
+
+- Change description. [Stavros Korokithakis]
+
+v0.0.12 (2016-11-16)
+--------------------
+
+Fix
+~~~
+
+- Remove debugging command that was erroneously left in. [Stavros
+  Korokithakis]
+
+Other
+~~~~~
+
+- 0.0.12. [semantic-release]
+
+v0.0.11 (2016-11-16)
+--------------------
+
+- 0.0.11. [semantic-release]
+
+- Feat: Add music mode. [Stavros Korokithakis]
+
+- Doc: Minor imprrovements. [Stavros Korokithakis]
+
+- Doc: Add badges. [Stavros Korokithakis]
+
+v0.0.10 (2016-11-15)
+--------------------
+
+Fix
+~~~
+
+- Don't require flake8 for tests any more. [Stavros Korokithakis]
+
+- Fix tests on Python 3. [Stavros Korokithakis]
+
+- Fix per-call effects. [Stavros Korokithakis]
+
+Other
+~~~~~
+
+- 0.0.10. [semantic-release]
+
+- Feat: Add set_adjust. [Stavros Korokithakis]
+
+- Chore: Add code coverage. [Stavros Korokithakis]
+
+- Add static check step to the CI config. [Stavros Korokithakis]
+
+- Feat: Add value parameter to set_hsv. [Stavros Korokithakis]
+
+- Doc: Minor doc correction. [Stavros Korokithakis]
+
+- Doc: Fix documentation typos. [Stavros Korokithakis]
+
+- Doc: Clarify yeecli link wording. [Stavros Korokithakis]
+
+v0.0.9 (2016-11-14)
+-------------------
+
+Fix
+~~~
+
+- Ignore errors on init files. [Stavros Korokithakis]
+
+Other
+~~~~~
+
+- 0.0.9. [semantic-release]
+
+- Add HSVTransition. [Stavros Korokithakis]
+
+v0.0.8 (2016-11-14)
+-------------------
+
+Fix
+~~~
+
+- Hopefully actually fix version string problem during setup. [Stavros
+  Korokithakis]
+
+Other
+~~~~~
+
+- 0.0.8. [semantic-release]
+
+v0.0.7 (2016-11-14)
+-------------------
+
+- 0.0.7. [semantic-release]
+
+- Change the docs link to the stable version. [Stavros Korokithakis]
+
+- Migrate the version string to avoid circular imports. [Stavros
+  Korokithakis]
+
+- Require enum34 for older Python versions. [Stavros Korokithakis]
+
+- Add source link to the docs. [Stavros Korokithakis]
+
+v0.0.6 (2016-11-14)
+-------------------
+
+- 0.0.6. [semantic-release]
+
+- Add flow support. [Stavros Korokithakis]
+
+v0.0.5 (2016-11-14)
+-------------------
+
+- 0.0.5. [semantic-release]
+
+- Add cron support. [Stavros Korokithakis]
+
+- Add name setting. [Stavros Korokithakis]
+
+- Fix tests. [Stavros Korokithakis]
+
+v0.0.4 (2016-11-13)
+-------------------
+
+- 0.0.4. [semantic-release]
+
+- Improve Python 3 compatibility. [Stavros Korokithakis]
+
+- Rename variable. [Stavros Korokithakis]
+
+- Add testing. [Stavros Korokithakis]
+
+v0.0.3 (2016-11-13)
+-------------------
+
+- 0.0.3. [semantic-release]
+
+- Update docs. [Stavros Korokithakis]
+
+- Add docs. [Stavros Korokithakis]
+
+- Fix README. [Stavros Korokithakis]
+
+- Initial commit. [Stavros Korokithakis]
+
+
