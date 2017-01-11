@@ -1,6 +1,9 @@
 import colorsys
+import logging
 from enum import Enum
 from itertools import chain
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class Action(Enum):
@@ -46,7 +49,7 @@ class Flow(object):
 
         # Note, main depends on us, so we cannot import BulbException here.
         if len(self.transitions) > 10:
-            raise Exception("More transactions (%s) than maximum of 10." % len(self.transitions))
+            _LOGGER.warning("More transactions (%s) than maximum of 10." % len(self.transitions))
 
     @property
     def expression(self):
@@ -71,7 +74,10 @@ class FlowTransition(object):
         :rtype: list
         """
         # Duration must be at least 50, otherwise there's an error.
-        return [max(50, self.duration), self._mode, self._value, int(self.brightness)]
+        brightness = int(min(self.brightness, 100))
+        if brightness != self.brightness:
+            _LOGGER.warning("Brightness was not between 0-100!")
+        return [max(50, self.duration), self._mode, self._value, brightness]
 
 
 class RGBTransition(FlowTransition):
