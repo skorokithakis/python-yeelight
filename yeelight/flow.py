@@ -44,6 +44,10 @@ class Flow(object):
         self.action = action
         self.transitions = transitions
 
+        # Note, main depends on us, so we cannot import BulbException here.
+        if len(self.transitions) > 10:
+            raise Exception("More transactions (%s) than maximum of 10." % len(self.transitions))
+
     @property
     def expression(self):
         """
@@ -67,7 +71,7 @@ class FlowTransition(object):
         :rtype: list
         """
         # Duration must be at least 50, otherwise there's an error.
-        return [max(50, self.duration), self._mode, self._value, self.brightness]
+        return [max(50, self.duration), self._mode, self._value, int(self.brightness)]
 
 
 class RGBTransition(FlowTransition):
@@ -100,6 +104,12 @@ class RGBTransition(FlowTransition):
         blue = max(0, min(255, self.blue))
         return red * 65536 + green * 256 + blue
 
+    def __repr__(self):
+        return "<%s(%s,%s,%s) duration %s, brightness %s>" % (
+            self.__class__.__name__,
+            self.red, self.green, self.blue,
+            self.duration, self.brightness)
+
 
 class HSVTransition(FlowTransition):
     def __init__(self, hue, saturation, duration=300, brightness=100):
@@ -130,6 +140,11 @@ class HSVTransition(FlowTransition):
         red, green, blue = [int(round(col * 255)) for col in colorsys.hsv_to_rgb(hue, saturation, 1)]
         return red * 65536 + green * 256 + blue
 
+    def __repr__(self):
+        return "<%s(%s,%s) duration %s, brightness %s>" % (self.__class__.__name__,
+                                                           self.hue, self.saturation,
+                                                           self.duration, self.brightness)
+
 
 class TemperatureTransition(FlowTransition):
     def __init__(self, degrees, duration=300, brightness=100):
@@ -155,6 +170,11 @@ class TemperatureTransition(FlowTransition):
         """The YeeLight-compatible value for this transition."""
         return max(1700, min(6500, self.degrees))
 
+    def __repr__(self):
+        return "<%s(%sK) duration %s, brightness %s>" % (
+            self.__class__.__name__, self.degrees,
+            self.duration, self.brightness)
+
 
 class SleepTransition(FlowTransition):
     def __init__(self, duration=300):
@@ -172,3 +192,6 @@ class SleepTransition(FlowTransition):
         self.brightness = 2
 
         self.duration = duration
+
+    def __repr__(self):
+        return "<%s: duration %s>" % (self.__class__.__name__, self.duration)
