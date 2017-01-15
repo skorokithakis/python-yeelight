@@ -11,6 +11,16 @@ MUSIC_PORT = 37657
 
 _LOGGER = logging.getLogger(__name__)
 
+# Mapping calls to their properties.
+# Used to keep music mode cache up to date.
+action_property_map = {
+    "set_ct_abx": ["ct"],
+    "set_rgb": ["rgb"],
+    "set_hsv": ["hue", "sat"],
+    "set_bright": ["bright"],
+    "set_power": ["power"]
+}
+
 @decorator
 def _command(f, *args, **kw):
     """
@@ -23,6 +33,12 @@ def _command(f, *args, **kw):
     method, params = f(*args, **kw)
     if method in ["set_ct_abx", "set_rgb", "set_hsv", "set_bright",
                   "set_power"]:
+        if self._music_mode:
+            if method in action_property_map:
+                set_prop = action_property_map[method]
+                update_props = dict(zip(set_prop, params))
+                _LOGGER.debug("Music mode cache update: %s", update_props)
+                self._last_properties.update(update_props)
         # Add the effect parameters.
         params += [effect, duration]
 
@@ -150,6 +166,10 @@ class Bulb(object):
         :returns: A dictionary of param: value items.
         :rtype: dict
         """
+        # When we are in music mode, the bulb does not respond to queries
+        # therefore we need to keep the state up-to-date ourselves
+        if self._music_mode:
+            return
         requested_properties = [
             "power", "bright", "ct", "rgb", "hue", "sat",
             "color_mode", "flowing", "delayoff", "flow_params",
@@ -383,6 +403,7 @@ class Bulb(object):
         as library freezes).
         """
         if self._music_mode:
+            return  # Do nothing if we are already in music mode. Log?
             raise AssertionError("Already in music mode, please stop music mode first.")
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -451,4 +472,5 @@ class Bulb(object):
         return "cron_del", [event_type.value]
 
     def __repr__(self):
-        return "Bulb<{ip}:{port}, type={type}>".format(ip=self._ip, port=self._port, type=self.bulb_type)
+        return "Bulb<{ip}:{port}, type={type}>".format(
+            ip=self._ip, port=self._port, type=self.bulb_type)
