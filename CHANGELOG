@@ -1,8 +1,8 @@
 Changelog
 =========
 
-%%version%% (unreleased)
-------------------------
+v0.1.0 (2017-01-17)
+-------------------
 
 Fixes
 ~~~~~
@@ -27,9 +27,28 @@ Fixes
 Other
 ~~~~~
 
+- Merge branch 'disco_mode_improvements' into 'master' [Stavros
+  Korokithakis]
+
+  Add caching for the music mode, as we are not able to get updates from the bulb when in it.
+
+  See merge request !1
+
+- Fix flake8 issues. [Teemu Rytilahti]
+
+- Move action_property_map to be inside of _command's music mode block
+  to avoid polluting. [Teemu Rytilahti]
+
+- Fixes for music mode based on PR review. [Teemu Rytilahti]
+
+- Add caching for disco mode, as we are not able to get updates from the
+  bulb when in it. [Teemu Rytilahti]
+
+- Try to fix flake8. [Stavros Korokithakis]
+
+- Fix gitchangelog. [Stavros Korokithakis]
+
 - Add .gitchangelog.rc. [Stavros Korokithakis]
-
-
 
 v0.0.13 (2017-01-11)
 --------------------
@@ -78,8 +97,6 @@ Other
 
 - Change description. [Stavros Korokithakis]
 
-
-
 v0.0.12 (2016-11-16)
 --------------------
 
@@ -88,8 +105,6 @@ Fixes
 
 - Remove debugging command that was erroneously left in. [Stavros
   Korokithakis]
-
-
 
 v0.0.11 (2016-11-16)
 --------------------
@@ -105,8 +120,6 @@ Other
 - Doc: Minor imprrovements. [Stavros Korokithakis]
 
 - Doc: Add badges. [Stavros Korokithakis]
-
-
 
 v0.0.10 (2016-11-15)
 --------------------
@@ -140,8 +153,6 @@ Other
 
 - Doc: Clarify yeecli link wording. [Stavros Korokithakis]
 
-
-
 v0.0.9 (2016-11-14)
 -------------------
 
@@ -155,8 +166,6 @@ Other
 
 - Add HSVTransition. [Stavros Korokithakis]
 
-
-
 v0.0.8 (2016-11-14)
 -------------------
 
@@ -165,8 +174,6 @@ Fixes
 
 - Hopefully actually fix version string problem during setup. [Stavros
   Korokithakis]
-
-
 
 v0.0.7 (2016-11-14)
 -------------------
@@ -180,14 +187,10 @@ v0.0.7 (2016-11-14)
 
 - Add source link to the docs. [Stavros Korokithakis]
 
-
-
 v0.0.6 (2016-11-14)
 -------------------
 
 - Add flow support. [Stavros Korokithakis]
-
-
 
 v0.0.5 (2016-11-14)
 -------------------
@@ -198,8 +201,6 @@ v0.0.5 (2016-11-14)
 
 - Fix tests. [Stavros Korokithakis]
 
-
-
 v0.0.4 (2016-11-13)
 -------------------
 
@@ -208,8 +209,6 @@ v0.0.4 (2016-11-13)
 - Rename variable. [Stavros Korokithakis]
 
 - Add testing. [Stavros Korokithakis]
-
-
 
 v0.0.3 (2016-11-13)
 -------------------
