@@ -36,7 +36,7 @@ def _command(f, *args, **kw):
         if self._music_mode:
             if method in action_property_map:
                 set_prop = action_property_map[method]
-                update_props = dict(zip(set_prop, params))
+                update_props = {set_prop[prop]:params[prop] for prop in range(len(set_prop))}
                 _LOGGER.debug("Music mode cache update: %s", update_props)
                 self._last_properties.update(update_props)
         # Add the effect parameters.
@@ -158,6 +158,16 @@ class Bulb(object):
         else:
             return BulbType.Color
 
+    @property
+    def music_mode(self):
+        """
+        Returns whether the music mode is active.
+
+        :rtype: bool
+        :return: True if music mode is on, False otherwise.
+        """
+        return self._music_mode
+
     def get_properties(self):
         """
         Retrieve and return the properties of the bulb, additionally updating
@@ -169,7 +179,8 @@ class Bulb(object):
         # When we are in music mode, the bulb does not respond to queries
         # therefore we need to keep the state up-to-date ourselves
         if self._music_mode:
-            return
+            return self._last_properties
+
         requested_properties = [
             "power", "bright", "ct", "rgb", "hue", "sat",
             "color_mode", "flowing", "delayoff", "flow_params",
@@ -403,7 +414,6 @@ class Bulb(object):
         as library freezes).
         """
         if self._music_mode:
-            return  # Do nothing if we are already in music mode. Log?
             raise AssertionError("Already in music mode, please stop music mode first.")
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
