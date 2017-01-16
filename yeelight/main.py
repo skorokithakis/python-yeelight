@@ -37,7 +37,7 @@ def _command(f, *args, **kw):
 
             if method in action_property_map:
                 set_prop = action_property_map[method]
-                update_props = {set_prop[prop]:params[prop] for prop in range(len(set_prop))}
+                update_props = {set_prop[prop]: params[prop] for prop in range(len(set_prop))}
                 _LOGGER.debug("Music mode cache update: %s", update_props)
                 self._last_properties.update(update_props)
         # Add the effect parameters.
@@ -46,7 +46,6 @@ def _command(f, *args, **kw):
     result = self.send_command(method, params).get("result", [])
     if result:
         return result[0]
-
 
 
 class BulbException(Exception):
