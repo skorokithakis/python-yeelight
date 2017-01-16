@@ -200,9 +200,12 @@ class Bulb(object):
             try:
                 data = self._socket.recv(16 * 1024)
             except socket.error:
-                # Some error occured like above, let's close and try later again..
+                # An error occured, let's close and abort...
                 self.__socket.close()
                 self.__socket = None
+                response = {"error": "Bulb closed the connection."}
+                break
+
             for line in data.split(b"\r\n"):
                 if not line:
                     continue
