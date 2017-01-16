@@ -11,6 +11,7 @@ MUSIC_PORT = 37657
 
 _LOGGER = logging.getLogger(__name__)
 
+
 @decorator
 def _command(f, *args, **kw):
     """
@@ -23,13 +24,28 @@ def _command(f, *args, **kw):
     method, params = f(*args, **kw)
     if method in ["set_ct_abx", "set_rgb", "set_hsv", "set_bright",
                   "set_power"]:
+        if self._music_mode:
+            # Mapping calls to their properties.
+            # Used to keep music mode cache up to date.
+            action_property_map = {
+                "set_ct_abx": ["ct"],
+                "set_rgb": ["rgb"],
+                "set_hsv": ["hue", "sat"],
+                "set_bright": ["bright"],
+                "set_power": ["power"]
+            }
+
+            if method in action_property_map:
+                set_prop = action_property_map[method]
+                update_props = {set_prop[prop]: params[prop] for prop in range(len(set_prop))}
+                _LOGGER.debug("Music mode cache update: %s", update_props)
+                self._last_properties.update(update_props)
         # Add the effect parameters.
         params += [effect, duration]
 
     result = self.send_command(method, params).get("result", [])
     if result:
         return result[0]
-
 
 
 class BulbException(Exception):
@@ -142,6 +158,16 @@ class Bulb(object):
         else:
             return BulbType.Color
 
+    @property
+    def music_mode(self):
+        """
+        Returns whether the music mode is active.
+
+        :rtype: bool
+        :return: True if music mode is on, False otherwise.
+        """
+        return self._music_mode
+
     def get_properties(self):
         """
         Retrieve and return the properties of the bulb, additionally updating
@@ -150,6 +176,11 @@ class Bulb(object):
         :returns: A dictionary of param: value items.
         :rtype: dict
         """
+        # When we are in music mode, the bulb does not respond to queries
+        # therefore we need to keep the state up-to-date ourselves
+        if self._music_mode:
+            return self._last_properties
+
         requested_properties = [
             "power", "bright", "ct", "rgb", "hue", "sat",
             "color_mode", "flowing", "delayoff", "flow_params",
@@ -451,4 +482,5 @@ class Bulb(object):
         return "cron_del", [event_type.value]
 
     def __repr__(self):
-        return "Bulb<{ip}:{port}, type={type}>".format(ip=self._ip, port=self._port, type=self.bulb_type)
+        return "Bulb<{ip}:{port}, type={type}>".format(
+            ip=self._ip, port=self._port, type=self.bulb_type)
