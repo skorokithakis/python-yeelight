@@ -4,8 +4,43 @@ Changelog
 %%version%% (unreleased)
 ------------------------
 
-Fix
-~~~
+Fixes
+~~~~~
+
+- Abort with an error if the bulb closes the connection (fixes #5).
+  [Stavros Korokithakis]
+
+- Flow API improvements (#3) [Teemu R]
+
+  * Flow API improvements
+
+  1. Cast brightness always to int.
+  2. Raise an exception when supplied with more than maximum amount of transitions.
+  3. Supply repr dunders.
+
+  * Flow: use warning instead of exception for invalid values. Add check for brightness' validity.
+
+  * Change warning to display for over 9 messages.
+
+  * Silently clamp brightness to 100, as elsewhere.
+
+Other
+~~~~~
+
+- Add .gitchangelog.rc. [Stavros Korokithakis]
+
+
+
+v0.0.13 (2017-01-11)
+--------------------
+
+Changes
+~~~~~~~
+
+- Add changelog. [Stavros Korokithakis]
+
+Fixes
+~~~~~
 
 - Make `ensure_on` more accurate by always fetching the properties
   before a method call. [Stavros Korokithakis]
@@ -43,36 +78,48 @@ Other
 
 - Change description. [Stavros Korokithakis]
 
+
+
 v0.0.12 (2016-11-16)
 --------------------
 
-Fix
-~~~
+Fixes
+~~~~~
 
 - Remove debugging command that was erroneously left in. [Stavros
   Korokithakis]
 
-Other
-~~~~~
 
-- 0.0.12. [semantic-release]
 
 v0.0.11 (2016-11-16)
 --------------------
 
-- 0.0.11. [semantic-release]
+Features
+~~~~~~~~
 
-- Feat: Add music mode. [Stavros Korokithakis]
+- Add music mode. [Stavros Korokithakis]
+
+Other
+~~~~~
 
 - Doc: Minor imprrovements. [Stavros Korokithakis]
 
 - Doc: Add badges. [Stavros Korokithakis]
 
+
+
 v0.0.10 (2016-11-15)
 --------------------
 
-Fix
-~~~
+Features
+~~~~~~~~
+
+- Add set_adjust. [Stavros Korokithakis]
+
+- Add value parameter to set_hsv. [Stavros Korokithakis]
+
+Fixes
+~~~~~
 
 - Don't require flake8 for tests any more. [Stavros Korokithakis]
 
@@ -83,15 +130,9 @@ Fix
 Other
 ~~~~~
 
-- 0.0.10. [semantic-release]
-
-- Feat: Add set_adjust. [Stavros Korokithakis]
-
 - Chore: Add code coverage. [Stavros Korokithakis]
 
 - Add static check step to the CI config. [Stavros Korokithakis]
-
-- Feat: Add value parameter to set_hsv. [Stavros Korokithakis]
 
 - Doc: Minor doc correction. [Stavros Korokithakis]
 
@@ -99,39 +140,36 @@ Other
 
 - Doc: Clarify yeecli link wording. [Stavros Korokithakis]
 
+
+
 v0.0.9 (2016-11-14)
 -------------------
 
-Fix
-~~~
+Fixes
+~~~~~
 
 - Ignore errors on init files. [Stavros Korokithakis]
 
 Other
 ~~~~~
 
-- 0.0.9. [semantic-release]
-
 - Add HSVTransition. [Stavros Korokithakis]
+
+
 
 v0.0.8 (2016-11-14)
 -------------------
 
-Fix
-~~~
+Fixes
+~~~~~
 
 - Hopefully actually fix version string problem during setup. [Stavros
   Korokithakis]
 
-Other
-~~~~~
 
-- 0.0.8. [semantic-release]
 
 v0.0.7 (2016-11-14)
 -------------------
-
-- 0.0.7. [semantic-release]
 
 - Change the docs link to the stable version. [Stavros Korokithakis]
 
@@ -142,17 +180,17 @@ v0.0.7 (2016-11-14)
 
 - Add source link to the docs. [Stavros Korokithakis]
 
+
+
 v0.0.6 (2016-11-14)
 -------------------
 
-- 0.0.6. [semantic-release]
-
 - Add flow support. [Stavros Korokithakis]
+
+
 
 v0.0.5 (2016-11-14)
 -------------------
-
-- 0.0.5. [semantic-release]
 
 - Add cron support. [Stavros Korokithakis]
 
@@ -160,10 +198,10 @@ v0.0.5 (2016-11-14)
 
 - Fix tests. [Stavros Korokithakis]
 
+
+
 v0.0.4 (2016-11-13)
 -------------------
-
-- 0.0.4. [semantic-release]
 
 - Improve Python 3 compatibility. [Stavros Korokithakis]
 
@@ -171,10 +209,10 @@ v0.0.4 (2016-11-13)
 
 - Add testing. [Stavros Korokithakis]
 
+
+
 v0.0.3 (2016-11-13)
 -------------------
-
-- 0.0.3. [semantic-release]
 
 - Update docs. [Stavros Korokithakis]
 
