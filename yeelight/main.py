@@ -50,16 +50,16 @@ def _command(f, *args, **kw):
 
 class BulbException(Exception):
     """
-    The exception is raised when bulb informs about errors, e.g., when
-    trying to issue unsupported command on the bulb.
+    This exception is raised when bulb informs about errors, e.g., when trying
+    to issue unsupported commands to the bulb.
     """
     pass
 
 
 class BulbType(Enum):
     """
-    The BulbType enum specifies bulb's type, either White or Color,
-    or Unknown if the properties have not been fetched yet.
+    The bulb type, either `White` or `Color`, or `Unknown` if the properties
+    have not been fetched yet.
     """
     Unknown = -1
     White = 0
@@ -143,12 +143,13 @@ class Bulb(object):
     @property
     def bulb_type(self):
         """
-        Returns BulbType :py:enum:`BulbType <yeelight.BulbType>` describing type
-        of the bulb. Currently this is Color or White.
+        Return a :py:class:`BulbType <yeelight.BulbType>` describing the bulb
+        type. This can either be `Color <yeelight.BulbType.Color>` or
+        `White <yeelight.BulbType.White>`.
 
         When trying to access before properties are known, the bulb type is unknown.
 
-        :rtype: BulbType
+        :rtype: yeelight.BulbType
         :return: The bulb's type.
         """
         if not self._last_properties:

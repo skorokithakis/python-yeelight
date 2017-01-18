@@ -12,6 +12,14 @@ yeelight module
     :members:
     :undoc-members:
 
+.. autoclass:: yeelight.BulbException
+    :members:
+    :undoc-members:
+
+.. autoclass:: yeelight.BulbType
+    :members:
+    :undoc-members:
+
 
 .. _flow-objects:
 
