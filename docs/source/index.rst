@@ -44,9 +44,52 @@ That's all that's required to install the library.
 Usage
 -----
 
-Since ``yeelight`` does not support discovery, you need to discover your bulbs
-manually (for example, using ``ping`` or looking at your router's DHCP table).
-After you have found your bulb's IP, it's time to instantiate a new
+First of all, you need to discover your bulb's IP. If you already know it, you
+can skip to the next section.
+
+Discovering all the devices on your network and their capabilities is easy with
+:py:func:`discover_bulbs <yeelight.discover_bulbs>`::
+
+    >>> from yeelight import discover_bulbs
+    >>> discover_bulbs()
+    [{'capabilities': {'bright': '50',
+                       'color_mode': '1',
+                       'ct': '2700',
+                       'fw_ver': '45',
+                       'hue': '359',
+                       'id': '0x0000000002dfb19a',
+                       'model': 'color',
+                       'name': 'bedroom',
+                       'power': 'off',
+                       'rgb': '16711935',
+                       'sat': '100',
+                       'support': 'get_prop set_default set_power toggle '
+                                  'set_bright start_cf stop_cf set_scene cron_add '
+                                  'cron_get cron_del set_ct_abx set_rgb set_hsv '
+                                  'set_adjust set_music set_name'},
+      'ip': '192.168.0.19',
+      'port': 55443},
+      {'capabilities': {'bright': '50',
+                       'color_mode': '1',
+                       'ct': '2700',
+                       'fw_ver': '45',
+                       'hue': '359',
+                       'id': '0x0000000002dfb2f1',
+                       'model': 'color',
+                       'name': 'livingroom',
+                       'power': 'off',
+                       'rgb': '16711935',
+                       'sat': '100',
+                       'support': 'get_prop set_default set_power toggle '
+                                  'set_bright start_cf stop_cf set_scene cron_add '
+                                  'cron_get cron_del set_ct_abx set_rgb set_hsv '
+                                  'set_adjust set_music set_name'},
+      'ip': '192.168.0.23',
+      'port': 55443}]
+
+That's it, now you know the addresses of all the bulbs on your local network.
+
+Now that you've discovered your bulb's IP, it's time to instantiate a new
 :py:class:`Bulb <yeelight.main.Bulb>`::
 
     >>> from yeelight import Bulb

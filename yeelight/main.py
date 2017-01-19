@@ -3,6 +3,10 @@ import json
 import socket
 import logging
 from enum import Enum
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 from .decorator import decorator
 from .flow import Flow
@@ -46,6 +50,48 @@ def _command(f, *args, **kw):
     result = self.send_command(method, params).get("result", [])
     if result:
         return result[0]
+
+
+def discover_bulbs(timeout=2):
+    """
+    Discover all the bulbs in the local network.
+
+    :param int timeout: How many seconds to wait for replies. Discovery will
+                        always take exactly this long to run, as it can't know
+                        when all the bulbs have finished responding.
+
+    :returns: A list of dictionaries, containing the ip, port and capabilities
+              of each of the bulbs in the network.
+    """
+    msg = 'M-SEARCH * HTTP/1.1\r\n' \
+          'ST:wifi_bulb\r\n' \
+          'MAN:"ssdp:discover"\r\n'
+
+    # Set up UDP socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    s.settimeout(timeout)
+    s.sendto(msg.encode(), ('239.255.255.250', 1982))
+
+    bulbs = []
+    bulb_ips = set()
+    while True:
+        try:
+            data, addr = s.recvfrom(65507)
+        except socket.timeout:
+            break
+
+        capabilities = dict([x.strip("\r").split(": ") for x in data.decode().split("\n") if ":" in x])
+        parsed_url = urlparse(capabilities["Location"])
+
+        bulb_ip = (parsed_url.hostname, parsed_url.port)
+        if bulb_ip in bulb_ips:
+            continue
+
+        capabilities = {key: value for key, value in capabilities.items() if key.islower()}
+        bulbs.append({"ip": bulb_ip[0], "port": bulb_ip[1], "capabilities": capabilities})
+        bulb_ips.add(bulb_ip)
+
+    return bulbs
 
 
 class BulbException(Exception):

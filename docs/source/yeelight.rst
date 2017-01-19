@@ -8,6 +8,8 @@ API of the project.
 yeelight module
 ---------------
 
+.. autofunction:: yeelight.discover_bulbs
+
 .. autoclass:: yeelight.Bulb
     :members:
     :undoc-members:
