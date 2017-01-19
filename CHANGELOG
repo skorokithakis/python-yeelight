@@ -1,7 +1,15 @@
 Changelog
 =========
 
-v0.1.0 (2017-01-17)
+v0.2.0 (2017-01-19)
+-------------------
+
+Features
+~~~~~~~~
+
+- Add discovery (closes #3). [Stavros Korokithakis]
+
+v0.1.0 (2017-01-16)
 -------------------
 
 Fixes
@@ -24,32 +32,6 @@ Fixes
 
   * Silently clamp brightness to 100, as elsewhere.
 
-Other
-~~~~~
-
-- Merge branch 'disco_mode_improvements' into 'master' [Stavros
-  Korokithakis]
-
-  Add caching for the music mode, as we are not able to get updates from the bulb when in it.
-
-  See merge request !1
-
-- Fix flake8 issues. [Teemu Rytilahti]
-
-- Move action_property_map to be inside of _command's music mode block
-  to avoid polluting. [Teemu Rytilahti]
-
-- Fixes for music mode based on PR review. [Teemu Rytilahti]
-
-- Add caching for disco mode, as we are not able to get updates from the
-  bulb when in it. [Teemu Rytilahti]
-
-- Try to fix flake8. [Stavros Korokithakis]
-
-- Fix gitchangelog. [Stavros Korokithakis]
-
-- Add .gitchangelog.rc. [Stavros Korokithakis]
-
 v0.0.13 (2017-01-11)
 --------------------
 
@@ -63,39 +45,6 @@ Fixes
 
 - Make `ensure_on` more accurate by always fetching the properties
   before a method call. [Stavros Korokithakis]
-
-Other
-~~~~~
-
-- Cast brightness to int as bulb doesn't accept floats (#2) [Teemu R]
-
-- Small changes to make bulb more downstream-friendly (#1) [Teemu R]
-
-  * Small changes to make bulb more downstream-friendly
-
-  This commit makes using the class much nicer for downstream by:
-  1. Non-existing properties are set to None instead of keeping them as ''.
-  2. Adds logger to allow enabling verbose messaging trace.
-  3. Bulb errors are raised as BulbExceptions, e.g., if user tries to set color on bulb not supporting the feature.
-  4. bulb_type allows distinguishing between color and white models.
-
-  * Small grammar fix.
-
-  * Wrap recv() similarly than the send, to avoid broken sockets caused by too much playing around I suppose.
-
-  * Fix PR reviews
-
-  * Small missing articles fix.
-
-  * Nicer check for "not any"
-
-- Fix style more. [Stavros Korokithakis]
-
-- Update .gitlab_ci.yml. [Stavros Korokithakis]
-
-- Add style info. [Stavros Korokithakis]
-
-- Change description. [Stavros Korokithakis]
 
 v0.0.12 (2016-11-16)
 --------------------
@@ -113,13 +62,6 @@ Features
 ~~~~~~~~
 
 - Add music mode. [Stavros Korokithakis]
-
-Other
-~~~~~
-
-- Doc: Minor imprrovements. [Stavros Korokithakis]
-
-- Doc: Add badges. [Stavros Korokithakis]
 
 v0.0.10 (2016-11-15)
 --------------------
@@ -140,19 +82,6 @@ Fixes
 
 - Fix per-call effects. [Stavros Korokithakis]
 
-Other
-~~~~~
-
-- Chore: Add code coverage. [Stavros Korokithakis]
-
-- Add static check step to the CI config. [Stavros Korokithakis]
-
-- Doc: Minor doc correction. [Stavros Korokithakis]
-
-- Doc: Fix documentation typos. [Stavros Korokithakis]
-
-- Doc: Clarify yeecli link wording. [Stavros Korokithakis]
-
 v0.0.9 (2016-11-14)
 -------------------
 
@@ -160,11 +89,6 @@ Fixes
 ~~~~~
 
 - Ignore errors on init files. [Stavros Korokithakis]
-
-Other
-~~~~~
-
-- Add HSVTransition. [Stavros Korokithakis]
 
 v0.0.8 (2016-11-14)
 -------------------
@@ -174,51 +98,5 @@ Fixes
 
 - Hopefully actually fix version string problem during setup. [Stavros
   Korokithakis]
-
-v0.0.7 (2016-11-14)
--------------------
-
-- Change the docs link to the stable version. [Stavros Korokithakis]
-
-- Migrate the version string to avoid circular imports. [Stavros
-  Korokithakis]
-
-- Require enum34 for older Python versions. [Stavros Korokithakis]
-
-- Add source link to the docs. [Stavros Korokithakis]
-
-v0.0.6 (2016-11-14)
--------------------
-
-- Add flow support. [Stavros Korokithakis]
-
-v0.0.5 (2016-11-14)
--------------------
-
-- Add cron support. [Stavros Korokithakis]
-
-- Add name setting. [Stavros Korokithakis]
-
-- Fix tests. [Stavros Korokithakis]
-
-v0.0.4 (2016-11-13)
--------------------
-
-- Improve Python 3 compatibility. [Stavros Korokithakis]
-
-- Rename variable. [Stavros Korokithakis]
-
-- Add testing. [Stavros Korokithakis]
-
-v0.0.3 (2016-11-13)
--------------------
-
-- Update docs. [Stavros Korokithakis]
-
-- Add docs. [Stavros Korokithakis]
-
-- Fix README. [Stavros Korokithakis]
-
-- Initial commit. [Stavros Korokithakis]
 
 

@@ -90,10 +90,6 @@ section_regexps = [
     ('Fixes', [
         r'^[fF]ix\s*:\s*((dev|use?r|pkg|test|doc)\s*:\s*)?([^\n]*)$',
      ]),
-
-    ('Other', None ## Match all lines
-     ),
-
 ]
 
 
