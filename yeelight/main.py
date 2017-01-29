@@ -266,7 +266,7 @@ class Bulb(object):
             # create a new one.
             self.__socket.close()
             self.__socket = None
-            raise_from(BulbException('Unable to send the command'), ex)
+            raise_from(BulbException('A socket error occurred when sending the command.'), ex)
 
         if self._music_mode:
             # We're in music mode, nothing else will happen.
