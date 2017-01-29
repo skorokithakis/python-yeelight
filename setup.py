@@ -28,7 +28,7 @@ setup(
     license="BSD",
     classifiers=classifiers,
     packages=["yeelight"],
-    install_requires=['enum34'],
+    install_requires=['enum34', 'future'],
     test_suite='yeelight.tests',
     tests_require=[],
 )
