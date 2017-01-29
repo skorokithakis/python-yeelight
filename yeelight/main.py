@@ -3,6 +3,7 @@ import json
 import socket
 import logging
 from enum import Enum
+from future.utils import raise_from
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -260,12 +261,12 @@ class Bulb(object):
 
         try:
             self._socket.send((json.dumps(command) + "\r\n").encode("utf8"))
-        except socket.error:
+        except socket.error as ex:
             # Some error occurred, remove this socket in hopes that we can later
             # create a new one.
             self.__socket.close()
             self.__socket = None
-            raise
+            raise_from(BulbException('A socket error occurred when sending the command.'), ex)
 
         if self._music_mode:
             # We're in music mode, nothing else will happen.
