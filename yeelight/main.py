@@ -1,9 +1,12 @@
 import colorsys
 import json
-import socket
 import logging
+import socket
+
 from enum import Enum
+
 from future.utils import raise_from
+
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -17,9 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 
 @decorator
 def _command(f, *args, **kw):
-    """
-    A decorator that wraps a function and enables effects.
-    """
+    """A decorator that wraps a function and enables effects."""
     self = args[0]
     effect = kw.get("effect", self.effect)
     duration = kw.get("duration", self.duration)
@@ -95,17 +96,23 @@ def discover_bulbs(timeout=2):
 
 class BulbException(Exception):
     """
+    A generic yeelight exception.
+
     This exception is raised when bulb informs about errors, e.g., when trying
     to issue unsupported commands to the bulb.
     """
+
     pass
 
 
 class BulbType(Enum):
     """
-    The bulb type, either `White` or `Color`, or `Unknown` if the properties
-    have not been fetched yet.
+    The bulb's type.
+
+    This is either `White` or `Color`, or `Unknown` if the properties have not
+    been fetched yet.
     """
+
     Unknown = -1
     White = 0
     Color = 1
@@ -157,7 +164,7 @@ class Bulb(object):
 
     @property
     def _socket(self):
-        "Return, optionally creating, the communication socket."
+        """Return, optionally creating, the communication socket."""
         if self.__socket is None:
             self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.__socket.settimeout(5)
@@ -188,7 +195,9 @@ class Bulb(object):
     @property
     def bulb_type(self):
         """
-        Return a :py:class:`BulbType <yeelight.BulbType>` describing the bulb
+        The type of bulb we're communicating with.
+
+        Returns a :py:class:`BulbType <yeelight.BulbType>` describing the bulb
         type. This can either be `Color <yeelight.BulbType.Color>` or
         `White <yeelight.BulbType.White>`.
 
@@ -207,7 +216,7 @@ class Bulb(object):
     @property
     def music_mode(self):
         """
-        Returns whether the music mode is active.
+        Return whether the music mode is active.
 
         :rtype: bool
         :return: True if music mode is on, False otherwise.
@@ -216,8 +225,9 @@ class Bulb(object):
 
     def get_properties(self):
         """
-        Retrieve and return the properties of the bulb, additionally updating
-        ``last_properties``.
+        Retrieve and return the properties of the bulb.
+
+        This method also updates ``last_properties`` when it is called.
 
         :returns: A dictionary of param: value items.
         :rtype: dict
@@ -400,22 +410,22 @@ class Bulb(object):
 
     @_command
     def turn_on(self, **kwargs):
-        "Turn the bulb on."
+        """Turn the bulb on."""
         return "set_power", ["on"]
 
     @_command
     def turn_off(self, **kwargs):
-        "Turn the bulb off."
+        """Turn the bulb off."""
         return "set_power", ["off"]
 
     @_command
     def toggle(self):
-        "Toggle the bulb on or off."
+        """Toggle the bulb on or off."""
         return "toggle", []
 
     @_command
     def set_default(self):
-        "Set the bulb's current state as default."
+        """Set the bulb's current state as default."""
         return "set_default", []
 
     @_command

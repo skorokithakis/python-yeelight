@@ -13,6 +13,7 @@ class Action(Enum):
     Use this as the ``action`` parameter in a flow, to specify what should
     happen after the flow ends.
     """
+
     recover = 0
     stay = 1
     off = 2
@@ -64,9 +65,8 @@ class Flow(object):
 
 
 class FlowTransition(object):
-    """
-    A single transition in the flow.
-    """
+    """A single transition in the flow."""
+
     def as_list(self):
         """
         Return a YeeLight-compatible expression that implements this transition.
