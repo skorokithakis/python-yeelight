@@ -1,5 +1,6 @@
 import colorsys
 import json
+import random
 import socket
 import logging
 from enum import Enum
@@ -11,8 +12,6 @@ except ImportError:
 
 from .decorator import decorator
 from .flow import Flow
-
-MUSIC_PORT = 37657
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -448,7 +447,7 @@ class Bulb(object):
         """Stop a flow."""
         return "stop_cf", []
 
-    def start_music(self):
+    def start_music(self, port=None):
         """
         Start music mode.
 
@@ -460,18 +459,25 @@ class Bulb(object):
         connect to that, and then close the old connection. If the bulb cannot
         connect to the host machine for any reason, bad things will happen (such
         as library freezes).
+
+        :param int port: The port to listen on. If none is specified, a random
+                         port will be chosen.
         """
         if self._music_mode:
             raise AssertionError("Already in music mode, please stop music mode first.")
 
+        if port is None:
+            # If the user hasn't chosen a port, pick a random one.
+            port = random.randint(30000, 60000)
+
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Reuse sockets so we don't hit "address already in use" errors.
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind(("", MUSIC_PORT))
+        s.bind(("", port))
         s.listen(3)
 
         local_ip = self._socket.getsockname()[0]
-        self.send_command("set_music", [1, local_ip, MUSIC_PORT])
+        self.send_command("set_music", [1, local_ip, port])
         s.settimeout(5)
         conn, _ = s.accept()
         s.close()  # Close the listening socket.
