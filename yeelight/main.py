@@ -1,6 +1,5 @@
 import colorsys
 import json
-import random
 import socket
 import logging
 from enum import Enum
@@ -447,7 +446,7 @@ class Bulb(object):
         """Stop a flow."""
         return "stop_cf", []
 
-    def start_music(self, port=None):
+    def start_music(self, port=0):
         """
         Start music mode.
 
@@ -466,14 +465,11 @@ class Bulb(object):
         if self._music_mode:
             raise AssertionError("Already in music mode, please stop music mode first.")
 
-        if port is None:
-            # If the user hasn't chosen a port, pick a random one.
-            port = random.randint(30000, 60000)
-
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Reuse sockets so we don't hit "address already in use" errors.
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind(("", port))
+        host, port = s.getsockname()
         s.listen(3)
 
         local_ip = self._socket.getsockname()[0]
