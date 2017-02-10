@@ -124,7 +124,8 @@ section_regexps = [
 #body_process = Wrap(regexp=r'\n(?=\w+\s*:)') | Indent(chars="  ")
 #body_process = Wrap(regexp=r'\n(?=\w+\s*:)')
 #body_process = noop
-body_process = ReSub(r'((^|\n)[A-Z]\w+(-\w+)*: .*(\n\s+.*)*)+$', r'') | strip
+#body_process = ReSub(r'((^|\n)[A-Z]\w+(-\w+)*: .*(\n\s+.*)*)+$', r'') | strip
+body_process = lambda text: ""
 
 
 ## ``subject_process`` is a callable
