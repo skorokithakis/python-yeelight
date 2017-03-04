@@ -101,7 +101,6 @@ class BulbException(Exception):
     This exception is raised when bulb informs about errors, e.g., when trying
     to issue unsupported commands to the bulb.
     """
-
     pass
 
 
@@ -112,7 +111,6 @@ class BulbType(Enum):
     This is either `White` or `Color`, or `Unknown` if the properties have not
     been fetched yet.
     """
-
     Unknown = -1
     White = 0
     Color = 1
