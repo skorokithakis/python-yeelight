@@ -27,7 +27,7 @@ def _command(f, *args, **kw):
 
     method, params = f(*args, **kw)
     if method in ["set_ct_abx", "set_rgb", "set_hsv", "set_bright",
-                  "set_power"]:
+                  "set_power", "toggle"]:
         if self._music_mode:
             # Mapping calls to their properties.
             # Used to keep music mode cache up to date.
@@ -38,8 +38,10 @@ def _command(f, *args, **kw):
                 "set_bright": ["bright"],
                 "set_power": ["power"]
             }
-
-            if method in action_property_map:
+            # Handle toggling separately, as it depends on previous power state.
+            if method == "toggle":
+                self._last_properties["power"] = "on" if self._last_properties["power"] == "off" else "off"
+            elif method in action_property_map:
                 set_prop = action_property_map[method]
                 update_props = {set_prop[prop]: params[prop] for prop in range(len(set_prop))}
                 _LOGGER.debug("Music mode cache update: %s", update_props)
@@ -472,6 +474,10 @@ class Bulb(object):
         """
         if self._music_mode:
             raise AssertionError("Already in music mode, please stop music mode first.")
+
+        # Force populating the cache in case we are being called directly
+        # without ever fetching properties beforehand
+        self.get_properties()
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Reuse sockets so we don't hit "address already in use" errors.

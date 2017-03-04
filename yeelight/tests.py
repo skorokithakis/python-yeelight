@@ -65,7 +65,7 @@ class Tests(unittest.TestCase):
     def test_toggle1(self):
         self.bulb.toggle()
         self.assertEqual(self.socket.sent["method"], "toggle")
-        self.assertEqual(self.socket.sent["params"], [])
+        self.assertEqual(self.socket.sent["params"], ["smooth", 300])
 
     def test_turn_off1(self):
         self.bulb.turn_off()
