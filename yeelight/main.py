@@ -38,7 +38,7 @@ def _command(f, *args, **kw):
                 "set_bright": ["bright"],
                 "set_power": ["power"]
             }
-            # Handle toggling separately, as it depends on previous power state.
+            # Handle toggling separately, as it depends on a previous power state.
             if method == "toggle":
                 self._last_properties["power"] = "on" if self._last_properties["power"] == "off" else "off"
             elif method in action_property_map:
