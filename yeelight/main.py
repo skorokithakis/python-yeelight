@@ -315,7 +315,7 @@ class Bulb(object):
         return response
 
     @_command
-    def set_color_temp(self, degrees, **kwargs):
+    def set_color_temp(self, degrees):
         """
         Set the bulb's color temperature.
 
@@ -328,7 +328,7 @@ class Bulb(object):
         return "set_ct_abx", [degrees]
 
     @_command
-    def set_rgb(self, red, green, blue, **kwargs):
+    def set_rgb(self, red, green, blue):
         """
         Set the bulb's RGB value.
 
@@ -397,7 +397,7 @@ class Bulb(object):
             return "start_cf", [1, 1, "%s, 1, %s, %s" % (duration, rgb, value)]
 
     @_command
-    def set_brightness(self, brightness, **kwargs):
+    def set_brightness(self, brightness):
         """
         Set the bulb's brightness.
 
@@ -409,12 +409,12 @@ class Bulb(object):
         return "set_bright", [brightness]
 
     @_command
-    def turn_on(self, **kwargs):
+    def turn_on(self):
         """Turn the bulb on."""
         return "set_power", ["on"]
 
     @_command
-    def turn_off(self, **kwargs):
+    def turn_off(self):
         """Turn the bulb off."""
         return "set_power", ["off"]
 
