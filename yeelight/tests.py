@@ -64,21 +64,27 @@ class Tests(unittest.TestCase):
 
     def test_toggle1(self):
         self.bulb.toggle()
-        self.bulb.toggle(duration=3000)
         self.assertEqual(self.socket.sent["method"], "toggle")
         self.assertEqual(self.socket.sent["params"], ["smooth", 300])
 
+        self.bulb.toggle(duration=3000)
+        self.assertEqual(self.socket.sent["params"], ["smooth", 3000])
+
     def test_turn_off1(self):
         self.bulb.turn_off()
-        self.bulb.turn_off(duration=3000)
         self.assertEqual(self.socket.sent["method"], "set_power")
         self.assertEqual(self.socket.sent["params"], ["off", "smooth", 300])
 
+        self.bulb.turn_off(duration=3000)
+        self.assertEqual(self.socket.sent["params"], ["off", "smooth", 3000])
+
     def test_turn_on1(self):
         self.bulb.turn_on()
-        self.bulb.turn_on(duration=3000)
         self.assertEqual(self.socket.sent["method"], "set_power")
         self.assertEqual(self.socket.sent["params"], ["on", "smooth", 300])
+
+        self.bulb.turn_on(duration=3000)
+        self.assertEqual(self.socket.sent["params"], ["on", "smooth", 3000])
 
     def test_turn_on2(self):
         self.bulb.effect = "sudden"
@@ -95,6 +101,9 @@ class Tests(unittest.TestCase):
         self.bulb.set_color_temp(1400)
         self.assertEqual(self.socket.sent["method"], "set_ct_abx")
         self.assertEqual(self.socket.sent["params"], [1700, "smooth", 300])
+
+        self.bulb.set_color_temp(1400, duration=3000)
+        self.assertEqual(self.socket.sent["params"], [1700, "smooth", 3000])
 
     def test_color_temp2(self):
         self.bulb.set_color_temp(8400, effect="sudden")
