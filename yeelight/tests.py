@@ -64,16 +64,19 @@ class Tests(unittest.TestCase):
 
     def test_toggle1(self):
         self.bulb.toggle()
+        self.bulb.toggle(duration=3000)
         self.assertEqual(self.socket.sent["method"], "toggle")
         self.assertEqual(self.socket.sent["params"], ["smooth", 300])
 
     def test_turn_off1(self):
         self.bulb.turn_off()
+        self.bulb.turn_off(duration=3000)
         self.assertEqual(self.socket.sent["method"], "set_power")
         self.assertEqual(self.socket.sent["params"], ["off", "smooth", 300])
 
     def test_turn_on1(self):
         self.bulb.turn_on()
+        self.bulb.turn_on(duration=3000)
         self.assertEqual(self.socket.sent["method"], "set_power")
         self.assertEqual(self.socket.sent["params"], ["on", "smooth", 300])
 
