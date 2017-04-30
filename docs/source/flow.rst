@@ -104,3 +104,26 @@ message and return, we can do::
     bulb.start_flow(flow)
 
 Pretty easy!
+
+
+Transition presets
+------------------
+
+The library includes some preset transitions in the
+:py:mod:`yeelight.transitions` module, to make it easy for you to start.
+
+You can use the transitions simply by calling the preset::
+
+    from yeelight.transitions import *
+    from yeelight import Flow
+
+    flow = Flow(
+        count=10,
+        transitions=disco(),  # Call the transition preset to get the
+                              # transitions you like.
+    )
+
+    bulb.start_flow(flow)
+
+Remember that the transition presets are functions, so you need to call them.
+That's because some of them take parameters.

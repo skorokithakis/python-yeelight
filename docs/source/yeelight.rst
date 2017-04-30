@@ -53,6 +53,15 @@ Flow objects
     :undoc-members:
 
 
+Transition presets
+------------------
+
+.. automodule:: yeelight.transitions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 Enums
 -----
 
