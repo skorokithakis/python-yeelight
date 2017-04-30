@@ -18,6 +18,20 @@ from .flow import Flow
 _LOGGER = logging.getLogger(__name__)
 
 
+def _clamp(value, minx, maxx):
+    """
+    Constrain a value between a minimum and a maximum.
+
+    If the value is larger than the maximum or lower than the minimum, the
+    maximum or minimum will be returned instead.
+
+    :param int value: The value to clamp.
+    :param int minx: The minimum the value can take.
+    :param int maxx: The maximum the value can take.
+    """
+    return max(minx, min(maxx, value))
+
+
 @decorator
 def _command(f, *args, **kw):
     """A decorator that wraps a function and enables effects."""
@@ -324,7 +338,7 @@ class Bulb(object):
         """
         self.ensure_on()
 
-        degrees = max(1700, min(6500, degrees))
+        degrees = _clamp(degrees, 1700, 6500)
         return "set_ct_abx", [degrees]
 
     @_command
@@ -338,9 +352,9 @@ class Bulb(object):
         """
         self.ensure_on()
 
-        red = max(0, min(255, red))
-        green = max(0, min(255, green))
-        blue = max(0, min(255, blue))
+        red = _clamp(red, 0, 255)
+        green = _clamp(green, 0, 255)
+        blue = _clamp(blue, 0, 255)
         return "set_rgb", [red * 65536 + green * 256 + blue]
 
     @_command
@@ -375,23 +389,23 @@ class Bulb(object):
         self.ensure_on()
 
         # We fake this using flow so we can add the `value` parameter.
-        hue = max(0, min(359, hue))
-        saturation = max(0, min(100, saturation))
+        hue = _clamp(hue, 0, 359)
+        saturation = _clamp(saturation, 0, 100)
 
         if value is None:
             # If no value was passed, use ``set_hsv`` to preserve luminance.
             return "set_hsv", [hue, saturation]
         else:
             # Otherwise, use flow.
-            value = max(0, min(100, value))
+            value = _clamp(value, 0, 100)
 
             if kwargs.get("effect", self.effect) == "sudden":
                 duration = 50
             else:
                 duration = kwargs.get("duration", self.duration)
 
-            hue = max(0, min(359, hue)) / 359.0
-            saturation = max(0, min(100, saturation)) / 100.0
+            hue = _clamp(hue, 0, 359) / 359.0
+            saturation = _clamp(saturation, 0, 100) / 100.0
             red, green, blue = [int(round(col * 255)) for col in colorsys.hsv_to_rgb(hue, saturation, 1)]
             rgb = red * 65536 + green * 256 + blue
             return "start_cf", [1, 1, "%s, 1, %s, %s" % (duration, rgb, value)]
@@ -405,7 +419,7 @@ class Bulb(object):
         """
         self.ensure_on()
 
-        brightness = int(max(1, min(100, brightness)))
+        brightness = _clamp(brightness, 1, 100)
         return "set_bright", [brightness]
 
     @_command

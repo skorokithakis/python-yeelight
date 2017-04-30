@@ -1,6 +1,7 @@
 """Pre-made transitions, for your strobing pleasure."""
 
-from .flow import HSVTransition, TemperatureTransition
+from .flow import HSVTransition, RGBTransition, TemperatureTransition
+from .main import _clamp
 
 
 def disco(bpm=120):
@@ -50,5 +51,28 @@ def strobe():
     transitions = [
         HSVTransition(0, 0, duration=50, brightness=100),
         HSVTransition(0, 0, duration=50, brightness=1),
+    ]
+    return transitions
+
+
+def pulse(red, green, blue, duration=250):
+    """
+    Pulse a single color once (mainly to be used for notifications).
+
+    :param int red: The red color component to pulse (0-255).
+    :param int green: The green color component to pulse (0-255).
+    :param int blue: The blue color component to pulse (0-255).
+    :param int duration: The duration to pulse for, in milliseconds.
+
+    :returns: A list of transitions.
+    :rtype: list
+    """
+    red = _clamp(red, 0, 255)
+    green = _clamp(green, 0, 255)
+    blue = _clamp(blue, 0, 255)
+
+    transitions = [
+        RGBTransition(red, green, blue, duration=duration),
+        RGBTransition(red, green, blue, duration=duration, brightness=1),
     ]
     return transitions
