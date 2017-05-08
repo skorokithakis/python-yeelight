@@ -3,6 +3,8 @@ import logging
 from enum import Enum
 from itertools import chain
 
+from .utils import _clamp
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -103,9 +105,9 @@ class RGBTransition(FlowTransition):
     @property
     def _value(self):
         """The YeeLight-compatible value for this transition."""
-        red = max(0, min(255, self.red))
-        green = max(0, min(255, self.green))
-        blue = max(0, min(255, self.blue))
+        red = _clamp(self.red, 0, 255)
+        green = _clamp(self.green, 0, 255)
+        blue = _clamp(self.blue, 0, 255)
         return red * 65536 + green * 256 + blue
 
     def __repr__(self):
@@ -138,7 +140,7 @@ class HSVTransition(FlowTransition):
     @property
     def _value(self):
         """The YeeLight-compatible value for this transition."""
-        hue = max(0, min(359, self.hue)) / 359.0
+        hue = _clamp(self.hue, 0, 359) / 359.0
         saturation = max(0, min(100, self.saturation)) / 100.0
 
         red, green, blue = [int(round(col * 255)) for col in colorsys.hsv_to_rgb(hue, saturation, 1)]
@@ -167,7 +169,7 @@ class TemperatureTransition(FlowTransition):
         self._mode = 2
 
         self.duration = duration
-        self.brightness = brightness
+        self.brightness = _clamp(brightness, 1, 100)
 
     @property
     def _value(self):

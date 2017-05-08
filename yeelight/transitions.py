@@ -1,7 +1,7 @@
 """Pre-made transitions, for your strobing pleasure."""
 
 from .flow import HSVTransition, RGBTransition, TemperatureTransition
-from .main import _clamp
+from .utils import _clamp
 
 
 def disco(bpm=120):
