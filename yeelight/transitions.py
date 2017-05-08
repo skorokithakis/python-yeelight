@@ -55,7 +55,7 @@ def strobe():
     return transitions
 
 
-def pulse(red, green, blue, duration=250):
+def pulse(red, green, blue, duration=250, brightness=100):
     """
     Pulse a single color once (mainly to be used for notifications).
 
@@ -63,6 +63,7 @@ def pulse(red, green, blue, duration=250):
     :param int green: The green color component to pulse (0-255).
     :param int blue: The blue color component to pulse (0-255).
     :param int duration: The duration to pulse for, in milliseconds.
+    :param int brightness: The brightness to pulse at (1-100).
 
     :returns: A list of transitions.
     :rtype: list
@@ -72,7 +73,7 @@ def pulse(red, green, blue, duration=250):
     blue = _clamp(blue, 0, 255)
 
     transitions = [
-        RGBTransition(red, green, blue, duration=duration),
+        RGBTransition(red, green, blue, duration=duration, brightness=brightness),
         RGBTransition(red, green, blue, duration=duration, brightness=1),
     ]
     return transitions
