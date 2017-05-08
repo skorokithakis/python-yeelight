@@ -201,7 +201,7 @@ def rgb(duration=250, brightness=100, sleep=3000):
 
 def randomloop(duration=750, brightness=100, count=9):
     """
-    Color changes between 9 randomly chosen colors Or less if specified.
+    Color changes between `count` randomly chosen colors.
 
     :param int duration: The duration to fade to next color, in milliseconds.
     :param int brightness: The brightness of the transition.
@@ -218,7 +218,7 @@ def randomloop(duration=750, brightness=100, count=9):
 
 def slowdown(duration=2000, brightness=100, count=8):
     """
-    Changes between 8 random chosen colors with increasing transition time.
+    Changes between `count` random chosen colors with increasing transition time.
 
     :param int duration: The duration to fade to next color, in milliseconds.
     :param int brightness: The brightness of the transition.
@@ -229,5 +229,5 @@ def slowdown(duration=2000, brightness=100, count=8):
     """
     count = _clamp(count, 1, 8)
     transitions = [HSVTransition(random.randint(0, 360), 100,
-                   duration=(duration*x)) for x in range(1, count+1)]
+                   duration=(duration * x)) for x in range(1, count + 1)]
     return transitions
