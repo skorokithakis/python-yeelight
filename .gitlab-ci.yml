@@ -4,17 +4,16 @@ stages:
   - static_check
   - tests
 
+before_script:
+  - pyenv global $(pyenv global | grep "^3.5")  # Set Python 3.5 as default.
+  - pip install -r requirements_dev.txt
+
 static_check:
   stage: static_check
-  before_script:
-    - pyenv global $(pyenv global | grep "^3.5")  # Set Python 3.5 as default.
-    - pip install -r requirements_dev.txt
   script:
     - flake8 .
 
 tests:
   stage: tests
-  before_script:
-    - pip install -r requirements_dev.txt
   script:
   - tox
