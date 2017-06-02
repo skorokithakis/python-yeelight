@@ -7,7 +7,7 @@ stages:
 static_check:
   stage: static_check
   before_script:
-    - pyenv global $(pyenv global | grep "^2.7")  # Set Python 2.7 as default.
+    - pyenv global $(pyenv global | grep "^3.5")  # Set Python 3.5 as default.
     - pip install -r requirements_dev.txt
   script:
     - flake8 .
