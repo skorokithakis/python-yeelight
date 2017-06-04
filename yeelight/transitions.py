@@ -157,6 +157,19 @@ def police2(duration=250, brightness=100):
     return transitions
 
 
+def lsd(duration=3000, brightness=100):
+    """
+    Gradual changes to a pleasing, trippy palette.
+
+    :param int brightness: The brightness of the transition.
+
+    :returns: A list of transitions.
+    :rtype: list
+    """
+    hs_values = [(3, 85), (20, 90), (55, 95), (93, 50), (198, 97)]
+    return [HSVTransition(hue, saturation, duration=duration, brightness=brightness) for hue, saturation in hs_values]
+
+
 def christmas(duration=250, brightness=100, sleep=3000):
     """
     Color changes from red to green, like christmas lights.
