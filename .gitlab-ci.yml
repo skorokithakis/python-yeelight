@@ -5,7 +5,7 @@ stages:
   - tests
 
 before_script:
-  - pyenv global $(pyenv global | grep "^3.5")  # Set Python 3.5 as default.
+  - pyenv global $(pyenv global | grep "^3.6")  # Set Python 3.5 as default.
   - pip install -r requirements_dev.txt
 
 static_check:
