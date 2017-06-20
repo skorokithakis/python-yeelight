@@ -5,3 +5,7 @@ flake8-tidy-imports
 pep8-naming
 Sphinx
 sphinx-rtd-theme
+
+pytest
+coverage
+pytest-cov
