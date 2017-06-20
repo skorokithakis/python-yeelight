@@ -6,6 +6,7 @@ stages:
 
 before_script:
   - pyenv global $(pyenv global | grep "^3.6")
+  - pip install -r requirements_dev.txt
 
 static_check:
   stage: static_check
