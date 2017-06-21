@@ -9,7 +9,7 @@ static_check:
   before_script:
     - pip3.6 install -r requirements_dev.txt
   script:
-    - /builds/stavros/python-yeelight/.tox/py36/bin/flake8 .
+    - /.pyenv/versions/3.6.0/bin/flake8 .
 
 tests:
   stage: tests
