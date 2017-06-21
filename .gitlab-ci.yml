@@ -7,7 +7,7 @@ stages:
 static_check:
   stage: static_check
   before_script:
-    - pip install -r requirements_dev.txt
+    - pip3.6 install -r requirements_dev.txt
   script:
     - .tox/py36/bin/flake8 .
 
