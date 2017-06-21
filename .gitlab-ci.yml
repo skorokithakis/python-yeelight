@@ -6,6 +6,8 @@ stages:
 
 static_check:
   stage: static_check
+  before_script:
+    - pip3.6 install -r requirements_dev.txt
   script:
     - flake8 .
 
