@@ -4,9 +4,6 @@ stages:
   - static_check
   - tests
 
-before_script:
-  - pip3.6 install -r requirements_dev.txt
-
 static_check:
   stage: static_check
   script:
