@@ -9,7 +9,7 @@ static_check:
   before_script:
     - pip install -r requirements_dev.txt
   script:
-    - flake8 .
+    - .tox/py36/bin/flake8 .
 
 tests:
   stage: tests
