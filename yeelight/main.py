@@ -72,6 +72,7 @@ def discover_bulbs(timeout=2):
 
     # Set up UDP socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
     s.settimeout(timeout)
     s.sendto(msg.encode(), ('239.255.255.250', 1982))
 
