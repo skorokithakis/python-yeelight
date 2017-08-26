@@ -225,11 +225,13 @@ class Bulb(object):
         """
         return self._music_mode
 
-    def get_properties(self):
+    def get_properties(self, requested_properties=["power", "bright", "ct", "rgb", "hue", "sat", "color_mode", "flowing", "delayoff", "music_on", "name"]):
         """
         Retrieve and return the properties of the bulb.
 
         This method also updates ``last_properties`` when it is called.
+
+        :param list requested_properties: The list of properties to request from the bulb.
 
         :returns: A dictionary of param: value items.
         :rtype: dict
@@ -239,11 +241,6 @@ class Bulb(object):
         if self._music_mode:
             return self._last_properties
 
-        requested_properties = [
-            "power", "bright", "ct", "rgb", "hue", "sat",
-            "color_mode", "flowing", "delayoff", "flow_params",
-            "music_on", "name"
-        ]
         response = self.send_command("get_prop", requested_properties)
         properties = response["result"]
         properties = [x if x else None for x in properties]
