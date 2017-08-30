@@ -232,6 +232,7 @@ class Bulb(object):
         This method also updates ``last_properties`` when it is called.
 
         :param list requested_properties: The list of properties to request from the bulb.
+                                          By default, this does not include ``flow_params``.
 
         :returns: A dictionary of param: value items.
         :rtype: dict

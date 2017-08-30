@@ -141,12 +141,11 @@ off::
 
 You can check the bulb's state by reading its properties::
 
-    >>> bulb.get_properties
+    >>> bulb.get_properties()
     {'bright': u'10',
      'color_mode': u'2',
      'ct': u'2700',
      'delayoff': u'0',
-     'flow_params': u'',
      'flowing': u'0',
      'hue': u'300',
      'music_on': u'0',
@@ -154,6 +153,9 @@ You can check the bulb's state by reading its properties::
      'power': u'off',
      'rgb': u'16737280',
      'sat': u'100'}
+
+Notice that the properties don't include `flow_params` by default, as that causes
+problems. If you want that, specify it as an argument to `get_properties()`.
 
 If you want to always turn the bulb on before running a command, set ``auto_on``
 to ``True``. This will refresh the bulb's properties before most calls, and will
