@@ -15,6 +15,7 @@ except ImportError:
 from .decorator import decorator
 from .flow import Flow
 from .utils import _clamp
+from .enums import PowerMode
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,6 +26,7 @@ def _command(f, *args, **kw):
     self = args[0]
     effect = kw.get("effect", self.effect)
     duration = kw.get("duration", self.duration)
+    power_mode = kw.get("power_mode", self.power_mode)
 
     method, params = f(*args, **kw)
     if method in ["set_ct_abx", "set_rgb", "set_hsv", "set_bright",
@@ -49,6 +51,9 @@ def _command(f, *args, **kw):
                 self._last_properties.update(update_props)
         # Add the effect parameters.
         params += [effect, duration]
+        # Add power_mode parameter.
+        if method == "set_power" and params[0] == "on":
+            params += [power_mode.value]
 
     result = self.send_command(method, params).get("result", [])
     if result:
@@ -121,8 +126,10 @@ class BulbType(Enum):
 
 
 class Bulb(object):
+
     def __init__(self, ip, port=55443, effect="smooth",
-                 duration=300, auto_on=False):
+                 duration=300, auto_on=False,
+                 power_mode=PowerMode.LAST):
         """
         The main controller class of a physical YeeLight bulb.
 
@@ -141,6 +148,9 @@ class Bulb(object):
                              <yeelight.Bulb.get_properties()>` or run
                              :py:meth:`ensure_on() <yeelight.Bulb.ensure_on>`
                              yourself if you're worried about rate-limiting.
+        :param yeelight.enums.PowerMode power_mode:
+                             The mode for the light set when powering on.
+
         """
         self._ip = ip
         self._port = port
@@ -148,6 +158,7 @@ class Bulb(object):
         self.effect = effect
         self.duration = duration
         self.auto_on = auto_on
+        self.power_mode = power_mode
 
         self.__cmd_id = 0           # The last command id we used.
         self._last_properties = {}  # The last set of properties we've seen.
@@ -548,3 +559,13 @@ class Bulb(object):
     def __repr__(self):
         return "Bulb<{ip}:{port}, type={type}>".format(
             ip=self._ip, port=self._port, type=self.bulb_type)
+
+    def set_power_mode(self, mode):
+        """
+        Set the light power mode.
+
+        If the light is off it will be turned on.
+
+        :param yeelight.enums.PowerMode mode: The mode to swith to.
+        """
+        return self.turn_on(power_mode=mode)
