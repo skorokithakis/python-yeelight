@@ -34,7 +34,8 @@ There are many ways to install ``yeelight``:
 Usage
 -----
 
-To use ``yeelight``, just import it in your project like so::
+To use ``yeelight``, first enable "development mode" on your bulb through the YeeLight app.
+Then, just import the library into your project like so::
 
     >>> from yeelight import Bulb
 
