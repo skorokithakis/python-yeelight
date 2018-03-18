@@ -77,6 +77,9 @@ def discover_bulbs(timeout=2, interface=False):
                         always take exactly this long to run, as it can't know
                         when all the bulbs have finished responding.
 
+    :param string interface: The interface that should be used for multicast packets.
+                             The default one will be used if this is not specified.
+
     :returns: A list of dictionaries, containing the ip, port and capabilities
               of each of the bulbs in the network.
     """
