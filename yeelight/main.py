@@ -62,6 +62,14 @@ def _command(f, *args, **kw):
         return result[0]
 
 def get_ip_address(ifname):
+    """
+    Returns the IPv4 address of the requested interface (thanks Martin Konecny, https://stackoverflow.com/a/24196955)
+
+    :param string interface: The interface to get the IPv4 address of.
+
+    :returns: The interface's IPv4 address.
+
+    """
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     return socket.inet_ntoa(fcntl.ioctl(
         s.fileno(),
@@ -78,6 +86,8 @@ def discover_bulbs(timeout=2, interface=False):
                         when all the bulbs have finished responding.
 
     :param string interface: The interface that should be used for multicast packets.
+                             Note: it *has* to have a valid IPv4 address. IPv6-only
+                             interfaces are not supported (at the moment).
                              The default one will be used if this is not specified.
 
     :returns: A list of dictionaries, containing the ip, port and capabilities
@@ -90,7 +100,7 @@ def discover_bulbs(timeout=2, interface=False):
     # Set up UDP socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
-    if interface != False:
+    if interface:
         s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(get_ip_address(interface)))
     s.settimeout(timeout)
     s.sendto(msg.encode(), ('239.255.255.250', 1982))
