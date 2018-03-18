@@ -2,6 +2,8 @@ import colorsys
 import json
 import logging
 import socket
+import fcntl
+import struct
 
 from enum import Enum
 
@@ -59,14 +61,34 @@ def _command(f, *args, **kw):
     if result:
         return result[0]
 
+def get_ip_address(ifname):
+    """
+    Returns the IPv4 address of the requested interface (thanks Martin Konecny, https://stackoverflow.com/a/24196955)
 
-def discover_bulbs(timeout=2):
+    :param string interface: The interface to get the IPv4 address of.
+
+    :returns: The interface's IPv4 address.
+
+    """
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(fcntl.ioctl(
+        s.fileno(),
+        0x8915,  # SIOCGIFADDR
+        struct.pack('256s', ifname[:15])
+    )[20:24])
+
+def discover_bulbs(timeout=2, interface=False):
     """
     Discover all the bulbs in the local network.
 
     :param int timeout: How many seconds to wait for replies. Discovery will
                         always take exactly this long to run, as it can't know
                         when all the bulbs have finished responding.
+
+    :param string interface: The interface that should be used for multicast packets.
+                             Note: it *has* to have a valid IPv4 address. IPv6-only
+                             interfaces are not supported (at the moment).
+                             The default one will be used if this is not specified.
 
     :returns: A list of dictionaries, containing the ip, port and capabilities
               of each of the bulbs in the network.
@@ -78,6 +100,8 @@ def discover_bulbs(timeout=2):
     # Set up UDP socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
+    if interface:
+        s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(get_ip_address(interface)))
     s.settimeout(timeout)
     s.sendto(msg.encode(), ('239.255.255.250', 1982))
 
