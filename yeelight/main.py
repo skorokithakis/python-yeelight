@@ -2,6 +2,8 @@ import colorsys
 import json
 import logging
 import socket
+import fcntl
+import struct
 
 from enum import Enum
 
@@ -59,8 +61,15 @@ def _command(f, *args, **kw):
     if result:
         return result[0]
 
+def get_ip_address(ifname):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(fcntl.ioctl(
+        s.fileno(),
+        0x8915,  # SIOCGIFADDR
+        struct.pack('256s', ifname[:15])
+    )[20:24])
 
-def discover_bulbs(timeout=2):
+def discover_bulbs(timeout=2, interface=False):
     """
     Discover all the bulbs in the local network.
 
@@ -78,6 +87,8 @@ def discover_bulbs(timeout=2):
     # Set up UDP socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
+    if interface != False:
+        s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(get_ip_address(interface)))
     s.settimeout(timeout)
     s.sendto(msg.encode(), ('239.255.255.250', 1982))
 
