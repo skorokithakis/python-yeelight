@@ -20,6 +20,19 @@ except ImportError:
 
 _LOGGER = logging.getLogger(__name__)
 
+MODEL_SPECS = {
+    'mono': {'min_kelvin': 2700, 'max_kelvin': 2700},
+    'mono1': {'min_kelvin': 2700, 'max_kelvin': 2700},
+    'color': {'min_kelvin': 1700, 'max_kelvin': 6500},
+    'color1': {'min_kelvin': 1700, 'max_kelvin': 6500},
+    'strip1': {'min_kelvin': 1700, 'max_kelvin': 6500},
+    'bslamp1': {'min_kelvin': 1700, 'max_kelvin': 6500},
+    'ceiling1': {'min_kelvin': 2700, 'max_kelvin': 6500},
+    'ceiling2': {'min_kelvin': 2700, 'max_kelvin': 6500},
+    'ceiling3': {'min_kelvin': 2700, 'max_kelvin': 6000},
+    'ceiling4': {'min_kelvin': 2700, 'max_kelvin': 6500},
+    'color2': {'min_kelvin': 2700, 'max_kelvin': 6500},
+}
 
 @decorator
 def _command(f, *args, **kw):
@@ -151,7 +164,10 @@ class BulbType(Enum):
 
 
 class Bulb(object):
-    def __init__(self, ip, port=55443, effect="smooth", duration=300, auto_on=False, power_mode=PowerMode.LAST):
+
+    def __init__(self, ip, port=55443, effect="smooth",
+                 duration=300, auto_on=False,
+                 power_mode=PowerMode.LAST, model=None):
         """
         The main controller class of a physical YeeLight bulb.
 
@@ -181,6 +197,7 @@ class Bulb(object):
         self.duration = duration
         self.auto_on = auto_on
         self.power_mode = power_mode
+        self.model = model
 
         self.__cmd_id = 0  # The last command id we used.
         self._last_properties = {}  # The last set of properties we've seen.
@@ -366,6 +383,20 @@ class Bulb(object):
 
         degrees = _clamp(degrees, 1700, 6500)
         return "set_ct_abx", [degrees]
+
+    @_command
+    def get_color_temp_range(self, **kwargs):
+        """
+        Return the bulb's color temperature range.
+        """
+        if self.model is not None and self.model in MODEL_SPECS:
+            return MODEL_SPECS[self.model]
+
+        if self.bulb_type is BulbType.White:
+            return MODEL_SPECS['mono']
+
+        # BulbType.Color and BulbType.Unknown
+        return MODEL_SPECS['color']
 
     @_command
     def set_rgb(self, red, green, blue, **kwargs):
