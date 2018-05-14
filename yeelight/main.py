@@ -188,6 +188,9 @@ class Bulb(object):
                              yourself if you're worried about rate-limiting.
         :param yeelight.enums.PowerMode power_mode:
                              The mode for the light set when powering on.
+        :param str model:    The model name of the yeelight. The setting is
+                             used to enable model specific features f.e. a
+                             particular color temperature range.
 
         """
         self._ip = ip
