@@ -20,7 +20,7 @@ except ImportError:
 
 _LOGGER = logging.getLogger(__name__)
 
-MODEL_SPECS = {
+_MODEL_SPECS = {
     'mono': {'min_kelvin': 2700, 'max_kelvin': 2700},
     'mono1': {'min_kelvin': 2700, 'max_kelvin': 2700},
     'color': {'min_kelvin': 1700, 'max_kelvin': 6500},
@@ -389,14 +389,14 @@ class Bulb(object):
         """
         Return the bulb's color temperature range.
         """
-        if self.model is not None and self.model in MODEL_SPECS:
-            return MODEL_SPECS[self.model]
+        if self.model is not None and self.model in _MODEL_SPECS:
+            return _MODEL_SPECS[self.model]
 
         if self.bulb_type is BulbType.White:
-            return MODEL_SPECS['mono']
+            return _MODEL_SPECS['mono']
 
         # BulbType.Color and BulbType.Unknown
-        return MODEL_SPECS['color']
+        return _MODEL_SPECS['color']
 
     @_command
     def set_rgb(self, red, green, blue, **kwargs):
