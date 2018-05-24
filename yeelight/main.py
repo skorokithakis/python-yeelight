@@ -1,23 +1,22 @@
 import colorsys
+import fcntl
 import json
 import logging
 import socket
-import fcntl
 import struct
-
 from enum import Enum
 
 from future.utils import raise_from
+
+from .decorator import decorator
+from .enums import PowerMode
+from .flow import Flow
+from .utils import _clamp
 
 try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
-
-from .decorator import decorator
-from .flow import Flow
-from .utils import _clamp
-from .enums import PowerMode
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,8 +30,7 @@ def _command(f, *args, **kw):
     power_mode = kw.get("power_mode", self.power_mode)
 
     method, params = f(*args, **kw)
-    if method in ["set_ct_abx", "set_rgb", "set_hsv", "set_bright",
-                  "set_power", "toggle"]:
+    if method in ["set_ct_abx", "set_rgb", "set_hsv", "set_bright", "set_power", "toggle"]:
         if self._music_mode:
             # Mapping calls to their properties.
             # Used to keep music mode cache up to date.
@@ -61,6 +59,7 @@ def _command(f, *args, **kw):
     if result:
         return result[0]
 
+
 def get_ip_address(ifname):
     """
     Returns the IPv4 address of the requested interface (thanks Martin Konecny, https://stackoverflow.com/a/24196955)
@@ -76,6 +75,7 @@ def get_ip_address(ifname):
         0x8915,  # SIOCGIFADDR
         struct.pack('256s', ifname[:15])
     )[20:24])
+
 
 def discover_bulbs(timeout=2, interface=False):
     """
@@ -141,8 +141,8 @@ class BulbType(Enum):
     """
     The bulb's type.
 
-    This is either `White`, `Color` or `WhiteTemp`, or `Unknown` if the properties have not
-    been fetched yet.
+    This is either `White` (for monochrome bulbs), `Color` (for color bulbs), `WhiteTemp` (for white bulbs with
+    configurable color temperature), or `Unknown` if the properties have not been fetched yet.
     """
     Unknown = -1
     White = 0
@@ -151,10 +151,7 @@ class BulbType(Enum):
 
 
 class Bulb(object):
-
-    def __init__(self, ip, port=55443, effect="smooth",
-                 duration=300, auto_on=False,
-                 power_mode=PowerMode.LAST):
+    def __init__(self, ip, port=55443, effect="smooth", duration=300, auto_on=False, power_mode=PowerMode.LAST):
         """
         The main controller class of a physical YeeLight bulb.
 
@@ -185,10 +182,10 @@ class Bulb(object):
         self.auto_on = auto_on
         self.power_mode = power_mode
 
-        self.__cmd_id = 0           # The last command id we used.
+        self.__cmd_id = 0  # The last command id we used.
         self._last_properties = {}  # The last set of properties we've seen.
-        self._music_mode = False    # Whether we're currently in music mode.
-        self.__socket = None        # The socket we use to communicate.
+        self._music_mode = False  # Whether we're currently in music mode.
+        self.__socket = None  # The socket we use to communicate.
 
     @property
     def _cmd_id(self):
@@ -236,8 +233,7 @@ class Bulb(object):
         The type of bulb we're communicating with.
 
         Returns a :py:class:`BulbType <yeelight.BulbType>` describing the bulb
-        type. This can either be `Color <yeelight.BulbType.Color>` or
-        `White <yeelight.BulbType.White>`.
+        type.
 
         When trying to access before properties are known, the bulb type is unknown.
 
@@ -248,7 +244,8 @@ class Bulb(object):
             return BulbType.Unknown
         if self.last_properties['rgb'] is None and self.last_properties['ct']:
             return BulbType.WhiteTemp
-        if all(name in self.last_properties and self.last_properties[name] is None for name in ['ct', 'rgb', 'hue', 'sat']):
+        if all(name in self.last_properties and self.last_properties[name] is None
+               for name in ['ct', 'rgb', 'hue', 'sat']):
             return BulbType.White
         else:
             return BulbType.Color
@@ -263,7 +260,12 @@ class Bulb(object):
         """
         return self._music_mode
 
-    def get_properties(self, requested_properties=["power", "bright", "ct", "rgb", "hue", "sat", "color_mode", "flowing", "delayoff", "music_on", "name"]):
+    def get_properties(
+            self,
+            requested_properties=[
+                "power", "bright", "ct", "rgb", "hue", "sat", "color_mode", "flowing", "delayoff", "music_on", "name"
+            ]
+    ):
         """
         Retrieve and return the properties of the bulb.
 
@@ -584,8 +586,7 @@ class Bulb(object):
         return "cron_del", [event_type.value]
 
     def __repr__(self):
-        return "Bulb<{ip}:{port}, type={type}>".format(
-            ip=self._ip, port=self._port, type=self.bulb_type)
+        return "Bulb<{ip}:{port}, type={type}>".format(ip=self._ip, port=self._port, type=self.bulb_type)
 
     def set_power_mode(self, mode):
         """
