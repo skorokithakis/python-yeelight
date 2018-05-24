@@ -141,12 +141,13 @@ class BulbType(Enum):
     """
     The bulb's type.
 
-    This is either `White` or `Color`, or `Unknown` if the properties have not
+    This is either `White`, `Color` or `WhiteTemp`, or `Unknown` if the properties have not
     been fetched yet.
     """
     Unknown = -1
     White = 0
     Color = 1
+    WhiteTemp = 2
 
 
 class Bulb(object):
@@ -245,6 +246,8 @@ class Bulb(object):
         """
         if not self._last_properties:
             return BulbType.Unknown
+        if self.last_properties['rgb'] is None and self.last_properties['ct']:
+            return BulbType.WhiteTemp
         if all(name in self.last_properties and self.last_properties[name] is None for name in ['ct', 'rgb', 'hue', 'sat']):
             return BulbType.White
         else:
