@@ -20,18 +20,18 @@ except ImportError:
 
 _LOGGER = logging.getLogger(__name__)
 
-_MODEL_SPECS = {
-    'mono': {'min_kelvin': 2700, 'max_kelvin': 2700},
-    'mono1': {'min_kelvin': 2700, 'max_kelvin': 2700},
-    'color': {'min_kelvin': 1700, 'max_kelvin': 6500},
-    'color1': {'min_kelvin': 1700, 'max_kelvin': 6500},
-    'strip1': {'min_kelvin': 1700, 'max_kelvin': 6500},
-    'bslamp1': {'min_kelvin': 1700, 'max_kelvin': 6500},
-    'ceiling1': {'min_kelvin': 2700, 'max_kelvin': 6500},
-    'ceiling2': {'min_kelvin': 2700, 'max_kelvin': 6500},
-    'ceiling3': {'min_kelvin': 2700, 'max_kelvin': 6000},
-    'ceiling4': {'min_kelvin': 2700, 'max_kelvin': 6500},
-    'color2': {'min_kelvin': 2700, 'max_kelvin': 6500},
+_MODEL_RANGES = {
+    'mono': {'color_temp': {'min': 2700, 'max': 2700}},
+    'mono1': {'color_temp': {'min': 2700, 'max': 2700}},
+    'color': {'color_temp': {'min': 1700, 'max': 6500}},
+    'color1':{'color_temp':  {'min': 1700, 'max': 6500}},
+    'strip1': {'color_temp': {'min': 1700, 'max': 6500}},
+    'bslamp1':{'color_temp':  {'min': 1700, 'max': 6500}},
+    'ceiling1': {'color_temp': {'min': 2700, 'max': 6500}},
+    'ceiling2':{'color_temp':  {'min': 2700, 'max': 6500}},
+    'ceiling3': {'color_temp': {'min': 2700, 'max': 6000}},
+    'ceiling4': {'color_temp': {'min': 2700, 'max': 6500}},
+    'color2': {'color_temp': {'min': 2700, 'max': 6500}},
 }
 
 @decorator
@@ -388,20 +388,6 @@ class Bulb(object):
         return "set_ct_abx", [degrees]
 
     @_command
-    def get_color_temp_range(self, **kwargs):
-        """
-        Return the bulb's color temperature range.
-        """
-        if self.model is not None and self.model in _MODEL_SPECS:
-            return _MODEL_SPECS[self.model]
-
-        if self.bulb_type is BulbType.White:
-            return _MODEL_SPECS['mono']
-
-        # BulbType.Color and BulbType.Unknown
-        return _MODEL_SPECS['color']
-
-    @_command
     def set_rgb(self, red, green, blue, **kwargs):
         """
         Set the bulb's RGB value.
@@ -631,3 +617,20 @@ class Bulb(object):
         :param yeelight.enums.PowerMode mode: The mode to swith to.
         """
         return self.turn_on(power_mode=mode)
+
+    def get_model_ranges(self, **kwargs):
+        """
+        Return ranges (e.g. color temperature min/max) of the bulb.
+        """
+        if self.model is not None and self.model in _MODEL_RANGES:
+            return _MODEL_RANGES[self.model]
+
+        _LOGGER.debug("Model unknown (%s). Providing a fallback", self.model)
+        if self.bulb_type is BulbType.White:
+            return _MODEL_RANGES['mono']
+
+        if self.bulb_type is BulbType.WhiteTemp:
+            return _MODEL_RANGES['ceiling1']
+
+        # BulbType.Color and BulbType.Unknown
+        return _MODEL_RANGES['color']
