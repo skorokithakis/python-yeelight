@@ -20,6 +20,19 @@ except ImportError:
 
 _LOGGER = logging.getLogger(__name__)
 
+_MODEL_RANGES = {
+    'mono': {'color_temp': {'min': 2700, 'max': 2700}},
+    'mono1': {'color_temp': {'min': 2700, 'max': 2700}},
+    'color': {'color_temp': {'min': 1700, 'max': 6500}},
+    'color1':{'color_temp':  {'min': 1700, 'max': 6500}},
+    'strip1': {'color_temp': {'min': 1700, 'max': 6500}},
+    'bslamp1':{'color_temp':  {'min': 1700, 'max': 6500}},
+    'ceiling1': {'color_temp': {'min': 2700, 'max': 6500}},
+    'ceiling2':{'color_temp':  {'min': 2700, 'max': 6500}},
+    'ceiling3': {'color_temp': {'min': 2700, 'max': 6000}},
+    'ceiling4': {'color_temp': {'min': 2700, 'max': 6500}},
+    'color2': {'color_temp': {'min': 2700, 'max': 6500}},
+}
 
 @decorator
 def _command(f, *args, **kw):
@@ -151,7 +164,10 @@ class BulbType(Enum):
 
 
 class Bulb(object):
-    def __init__(self, ip, port=55443, effect="smooth", duration=300, auto_on=False, power_mode=PowerMode.LAST):
+
+    def __init__(self, ip, port=55443, effect="smooth",
+                 duration=300, auto_on=False,
+                 power_mode=PowerMode.LAST, model=None):
         """
         The main controller class of a physical YeeLight bulb.
 
@@ -172,6 +188,10 @@ class Bulb(object):
                              yourself if you're worried about rate-limiting.
         :param yeelight.enums.PowerMode power_mode:
                              The mode for the light set when powering on.
+        :param str model:    The model name of the yeelight (e.g. "color",
+                             "mono", etc). The setting is used to enable model
+                             specific features (e.g. a particular color
+                             temperature range).
 
         """
         self._ip = ip
@@ -181,6 +201,7 @@ class Bulb(object):
         self.duration = duration
         self.auto_on = auto_on
         self.power_mode = power_mode
+        self.model = model
 
         self.__cmd_id = 0  # The last command id we used.
         self._last_properties = {}  # The last set of properties we've seen.
@@ -597,3 +618,20 @@ class Bulb(object):
         :param yeelight.enums.PowerMode mode: The mode to swith to.
         """
         return self.turn_on(power_mode=mode)
+
+    def get_model_ranges(self, **kwargs):
+        """
+        Return ranges (e.g. color temperature min/max) of the bulb.
+        """
+        if self.model is not None and self.model in _MODEL_RANGES:
+            return _MODEL_RANGES[self.model]
+
+        _LOGGER.debug("Model unknown (%s). Providing a fallback", self.model)
+        if self.bulb_type is BulbType.White:
+            return _MODEL_RANGES['mono']
+
+        if self.bulb_type is BulbType.WhiteTemp:
+            return _MODEL_RANGES['ceiling1']
+
+        # BulbType.Color and BulbType.Unknown
+        return _MODEL_RANGES['color']
