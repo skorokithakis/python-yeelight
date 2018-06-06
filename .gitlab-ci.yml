@@ -8,6 +8,7 @@ static_check:
   stage: static_check
   before_script:
     - pip3.6 install -r requirements_dev.txt
+    - git status
   script:
     - /.pyenv/versions/3.6.0/bin/pre-commit run -a
 
