@@ -52,7 +52,9 @@ class Flow(object):
 
         # Note, main depends on us, so we cannot import BulbException here.
         if len(self.transitions) > 9:
-            _LOGGER.warning("The bulb seems to support up to 9 transitions. Your %s might fail." % len(self.transitions))
+            _LOGGER.warning(
+                "The bulb seems to support up to 9 transitions. Your %s might fail." % len(self.transitions)
+            )
 
     @property
     def expression(self):
@@ -113,8 +115,12 @@ class RGBTransition(FlowTransition):
     def __repr__(self):
         return "<%s(%s,%s,%s) duration %s, brightness %s>" % (
             self.__class__.__name__,
-            self.red, self.green, self.blue,
-            self.duration, self.brightness)
+            self.red,
+            self.green,
+            self.blue,
+            self.duration,
+            self.brightness,
+        )
 
 
 class HSVTransition(FlowTransition):
@@ -147,9 +153,13 @@ class HSVTransition(FlowTransition):
         return red * 65536 + green * 256 + blue
 
     def __repr__(self):
-        return "<%s(%s,%s) duration %s, brightness %s>" % (self.__class__.__name__,
-                                                           self.hue, self.saturation,
-                                                           self.duration, self.brightness)
+        return "<%s(%s,%s) duration %s, brightness %s>" % (
+            self.__class__.__name__,
+            self.hue,
+            self.saturation,
+            self.duration,
+            self.brightness,
+        )
 
 
 class TemperatureTransition(FlowTransition):
@@ -178,8 +188,11 @@ class TemperatureTransition(FlowTransition):
 
     def __repr__(self):
         return "<%s(%sK) duration %s, brightness %s>" % (
-            self.__class__.__name__, self.degrees,
-            self.duration, self.brightness)
+            self.__class__.__name__,
+            self.degrees,
+            self.duration,
+            self.brightness,
+        )
 
 
 class SleepTransition(FlowTransition):

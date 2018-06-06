@@ -6,8 +6,10 @@ class CronType(Enum):
 
     off = 0
 
+
 class PowerMode(IntEnum):
     """Power mode of the light."""
+
     LAST = 0
     NORMAL = 1
     RGB = 2

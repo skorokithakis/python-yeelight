@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 
 import sys
-assert sys.version >= '2.7', "Requires Python v2.7 or above."
+
 from setuptools import setup
 
-with open('yeelight/version.py') as f: exec(f.read())
+assert sys.version >= "2.7", "Requires Python v2.7 or above."
+
+with open("yeelight/version.py") as f:
+    exec(f.read())
 
 classifiers = [
     "License :: OSI Approved :: BSD License",
@@ -28,7 +31,7 @@ setup(
     license="BSD",
     classifiers=classifiers,
     packages=["yeelight"],
-    install_requires=['enum-compat', 'future'],
-    test_suite='yeelight.tests',
+    install_requires=["enum-compat", "future"],
+    test_suite="yeelight.tests",
     tests_require=[],
 )

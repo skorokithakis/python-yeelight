@@ -21,18 +21,19 @@ except ImportError:
 _LOGGER = logging.getLogger(__name__)
 
 _MODEL_RANGES = {
-    'mono': {'color_temp': {'min': 2700, 'max': 2700}},
-    'mono1': {'color_temp': {'min': 2700, 'max': 2700}},
-    'color': {'color_temp': {'min': 1700, 'max': 6500}},
-    'color1':{'color_temp':  {'min': 1700, 'max': 6500}},
-    'strip1': {'color_temp': {'min': 1700, 'max': 6500}},
-    'bslamp1':{'color_temp':  {'min': 1700, 'max': 6500}},
-    'ceiling1': {'color_temp': {'min': 2700, 'max': 6500}},
-    'ceiling2':{'color_temp':  {'min': 2700, 'max': 6500}},
-    'ceiling3': {'color_temp': {'min': 2700, 'max': 6000}},
-    'ceiling4': {'color_temp': {'min': 2700, 'max': 6500}},
-    'color2': {'color_temp': {'min': 2700, 'max': 6500}},
+    "mono": {"color_temp": {"min": 2700, "max": 2700}},
+    "mono1": {"color_temp": {"min": 2700, "max": 2700}},
+    "color": {"color_temp": {"min": 1700, "max": 6500}},
+    "color1": {"color_temp": {"min": 1700, "max": 6500}},
+    "strip1": {"color_temp": {"min": 1700, "max": 6500}},
+    "bslamp1": {"color_temp": {"min": 1700, "max": 6500}},
+    "ceiling1": {"color_temp": {"min": 2700, "max": 6500}},
+    "ceiling2": {"color_temp": {"min": 2700, "max": 6500}},
+    "ceiling3": {"color_temp": {"min": 2700, "max": 6000}},
+    "ceiling4": {"color_temp": {"min": 2700, "max": 6500}},
+    "color2": {"color_temp": {"min": 2700, "max": 6500}},
 }
+
 
 @decorator
 def _command(f, *args, **kw):
@@ -52,7 +53,7 @@ def _command(f, *args, **kw):
                 "set_rgb": ["rgb"],
                 "set_hsv": ["hue", "sat"],
                 "set_bright": ["bright"],
-                "set_power": ["power"]
+                "set_power": ["power"],
             }
             # Handle toggling separately, as it depends on a previous power state.
             if method == "toggle":
@@ -83,11 +84,7 @@ def get_ip_address(ifname):
 
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    return socket.inet_ntoa(fcntl.ioctl(
-        s.fileno(),
-        0x8915,  # SIOCGIFADDR
-        struct.pack('256s', ifname[:15])
-    )[20:24])
+    return socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack("256s", ifname[:15]))[20:24])  # SIOCGIFADDR
 
 
 def discover_bulbs(timeout=2, interface=False):
@@ -106,9 +103,7 @@ def discover_bulbs(timeout=2, interface=False):
     :returns: A list of dictionaries, containing the ip, port and capabilities
               of each of the bulbs in the network.
     """
-    msg = 'M-SEARCH * HTTP/1.1\r\n' \
-          'ST:wifi_bulb\r\n' \
-          'MAN:"ssdp:discover"\r\n'
+    msg = "M-SEARCH * HTTP/1.1\r\n" "ST:wifi_bulb\r\n" 'MAN:"ssdp:discover"\r\n'
 
     # Set up UDP socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -116,7 +111,7 @@ def discover_bulbs(timeout=2, interface=False):
     if interface:
         s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(get_ip_address(interface)))
     s.settimeout(timeout)
-    s.sendto(msg.encode(), ('239.255.255.250', 1982))
+    s.sendto(msg.encode(), ("239.255.255.250", 1982))
 
     bulbs = []
     bulb_ips = set()
@@ -147,6 +142,7 @@ class BulbException(Exception):
     This exception is raised when bulb informs about errors, e.g., when trying
     to issue unsupported commands to the bulb.
     """
+
     pass
 
 
@@ -157,6 +153,7 @@ class BulbType(Enum):
     This is either `White` (for monochrome bulbs), `Color` (for color bulbs), `WhiteTemp` (for white bulbs with
     configurable color temperature), or `Unknown` if the properties have not been fetched yet.
     """
+
     Unknown = -1
     White = 0
     Color = 1
@@ -164,10 +161,9 @@ class BulbType(Enum):
 
 
 class Bulb(object):
-
-    def __init__(self, ip, port=55443, effect="smooth",
-                 duration=300, auto_on=False,
-                 power_mode=PowerMode.LAST, model=None):
+    def __init__(
+        self, ip, port=55443, effect="smooth", duration=300, auto_on=False, power_mode=PowerMode.LAST, model=None
+    ):
         """
         The main controller class of a physical YeeLight bulb.
 
@@ -263,10 +259,11 @@ class Bulb(object):
         """
         if not self._last_properties:
             return BulbType.Unknown
-        if self.last_properties['rgb'] is None and self.last_properties['ct']:
+        if self.last_properties["rgb"] is None and self.last_properties["ct"]:
             return BulbType.WhiteTemp
-        if all(name in self.last_properties and self.last_properties[name] is None
-               for name in ['ct', 'rgb', 'hue', 'sat']):
+        if all(
+            name in self.last_properties and self.last_properties[name] is None for name in ["ct", "rgb", "hue", "sat"]
+        ):
             return BulbType.White
         else:
             return BulbType.Color
@@ -282,10 +279,20 @@ class Bulb(object):
         return self._music_mode
 
     def get_properties(
-            self,
-            requested_properties=[
-                "power", "bright", "ct", "rgb", "hue", "sat", "color_mode", "flowing", "delayoff", "music_on", "name"
-            ]
+        self,
+        requested_properties=[
+            "power",
+            "bright",
+            "ct",
+            "rgb",
+            "hue",
+            "sat",
+            "color_mode",
+            "flowing",
+            "delayoff",
+            "music_on",
+            "name",
+        ],
     ):
         """
         Retrieve and return the properties of the bulb.
@@ -320,11 +327,7 @@ class Bulb(object):
         :raises BulbException: When the bulb indicates an error condition.
         :returns: The response from the bulb.
         """
-        command = {
-            "id": self._cmd_id,
-            "method": method,
-            "params": params,
-        }
+        command = {"id": self._cmd_id, "method": method, "params": params}
 
         _LOGGER.debug("%s > %s", self, command)
 
@@ -335,7 +338,7 @@ class Bulb(object):
             # create a new one.
             self.__socket.close()
             self.__socket = None
-            raise_from(BulbException('A socket error occurred when sending the command.'), ex)
+            raise_from(BulbException("A socket error occurred when sending the command."), ex)
 
         if self._music_mode:
             # We're in music mode, nothing else will happen.
@@ -628,10 +631,10 @@ class Bulb(object):
 
         _LOGGER.debug("Model unknown (%s). Providing a fallback", self.model)
         if self.bulb_type is BulbType.White:
-            return _MODEL_RANGES['mono']
+            return _MODEL_RANGES["mono"]
 
         if self.bulb_type is BulbType.WhiteTemp:
-            return _MODEL_RANGES['ceiling1']
+            return _MODEL_RANGES["ceiling1"]
 
         # BulbType.Color and BulbType.Unknown
-        return _MODEL_RANGES['color']
+        return _MODEL_RANGES["color"]

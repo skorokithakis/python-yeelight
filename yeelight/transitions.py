@@ -1,9 +1,9 @@
 """Pre-made transitions, for your strobing pleasure."""
 
-from .flow import HSVTransition, RGBTransition,\
-                  TemperatureTransition, SleepTransition
-from .utils import _clamp
 import random
+
+from .flow import HSVTransition, RGBTransition, SleepTransition, TemperatureTransition
+from .utils import _clamp
 
 
 def disco(bpm=120):
@@ -36,10 +36,7 @@ def temp():
     :returns: A list of transitions.
     :rtype: list
     """
-    transitions = [
-        TemperatureTransition(1700, duration=40000),
-        TemperatureTransition(6500, duration=40000),
-    ]
+    transitions = [TemperatureTransition(1700, duration=40000), TemperatureTransition(6500, duration=40000)]
     return transitions
 
 
@@ -50,10 +47,7 @@ def strobe():
     :returns: A list of transitions.
     :rtype: list
     """
-    transitions = [
-        HSVTransition(0, 0, duration=50, brightness=100),
-        HSVTransition(0, 0, duration=50, brightness=1),
-    ]
+    transitions = [HSVTransition(0, 0, duration=50, brightness=100), HSVTransition(0, 0, duration=50, brightness=1)]
     return transitions
 
 
@@ -92,11 +86,11 @@ def strobe_color(brightness=100):
     """
     transitions = [
         HSVTransition(240, 100, duration=50, brightness=brightness),
-        HSVTransition(60,  100, duration=50, brightness=brightness),
+        HSVTransition(60, 100, duration=50, brightness=brightness),
         HSVTransition(330, 100, duration=50, brightness=brightness),
-        HSVTransition(0,   100, duration=50, brightness=brightness),
+        HSVTransition(0, 100, duration=50, brightness=brightness),
         HSVTransition(173, 100, duration=50, brightness=brightness),
-        HSVTransition(30,  100, duration=50, brightness=brightness),
+        HSVTransition(30, 100, duration=50, brightness=brightness),
     ]
     return transitions
 
@@ -202,7 +196,7 @@ def rgb(duration=250, brightness=100, sleep=3000):
     :rtype: list
     """
     transitions = [
-        HSVTransition(0,   100, duration=duration, brightness=brightness),
+        HSVTransition(0, 100, duration=duration, brightness=brightness),
         SleepTransition(duration=sleep),
         HSVTransition(120, 100, duration=duration, brightness=brightness),
         SleepTransition(duration=sleep),
@@ -224,8 +218,7 @@ def randomloop(duration=750, brightness=100, count=9):
     :rtype: list
     """
     count = _clamp(count, 1, 9)
-    transitions = [HSVTransition(random.randint(0, 360), 100,
-                   duration=duration) for _ in range(count)]
+    transitions = [HSVTransition(random.randint(0, 360), 100, duration=duration) for _ in range(count)]
     return transitions
 
 
@@ -241,6 +234,5 @@ def slowdown(duration=2000, brightness=100, count=8):
     :rtype: list
     """
     count = _clamp(count, 1, 8)
-    transitions = [HSVTransition(random.randint(0, 360), 100,
-                   duration=(duration * x)) for x in range(1, count + 1)]
+    transitions = [HSVTransition(random.randint(0, 360), 100, duration=(duration * x)) for x in range(1, count + 1)]
     return transitions

@@ -3,10 +3,11 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.abspath(__file__ + "/../.."))
-
 from yeelight import Bulb  # noqa
 from yeelight import enums
+
+sys.path.insert(0, os.path.abspath(__file__ + "/../.."))
+
 
 class SocketMock(object):
     def __init__(self, received=b'{"id": 0, "result": ["ok"]}'):
@@ -28,23 +29,23 @@ class Tests(unittest.TestCase):
     def test_rgb1(self):
         self.bulb.set_rgb(255, 255, 0)
         self.assertEqual(self.socket.sent["method"], "set_rgb")
-        self.assertEqual(self.socket.sent["params"], [16776960, 'smooth', 300])
+        self.assertEqual(self.socket.sent["params"], [16776960, "smooth", 300])
 
     def test_rgb2(self):
         self.bulb.effect = "sudden"
         self.bulb.set_rgb(255, 255, 0)
         self.assertEqual(self.socket.sent["method"], "set_rgb")
-        self.assertEqual(self.socket.sent["params"], [16776960, 'sudden', 300])
+        self.assertEqual(self.socket.sent["params"], [16776960, "sudden", 300])
 
     def test_rgb3(self):
         self.bulb.set_rgb(255, 255, 0, effect="sudden")
         self.assertEqual(self.socket.sent["method"], "set_rgb")
-        self.assertEqual(self.socket.sent["params"], [16776960, 'sudden', 300])
+        self.assertEqual(self.socket.sent["params"], [16776960, "sudden", 300])
 
     def test_hsv1(self):
         self.bulb.set_hsv(200, 100, effect="sudden")
         self.assertEqual(self.socket.sent["method"], "set_hsv")
-        self.assertEqual(self.socket.sent["params"], [200, 100, 'sudden', 300])
+        self.assertEqual(self.socket.sent["params"], [200, 100, "sudden", 300])
 
     def test_hsv2(self):
         self.bulb.set_hsv(200, 100, 10, effect="sudden", duration=500)
@@ -137,5 +138,5 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.socket.sent["params"], [6500, "sudden", 300])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

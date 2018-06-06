@@ -8,3 +8,5 @@ sphinx-rtd-theme
 pytest
 coverage
 pytest-cov
+
+pre-commit
