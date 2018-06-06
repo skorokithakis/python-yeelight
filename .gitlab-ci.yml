@@ -8,7 +8,7 @@ static_check:
   stage: static_check
   before_script:
     - apt-get update
-    - apt-get install git
+    - apt-get install -y git
     - pip3.6 install -r requirements_dev.txt
   script:
     - /.pyenv/versions/3.6.0/bin/pre-commit run -a
