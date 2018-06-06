@@ -9,7 +9,7 @@ static_check:
   before_script:
     - pip3.6 install -r requirements_dev.txt
   script:
-    - pre-commit run -a
+    - /.pyenv/versions/3.6.0/bin/pre-commit run -a
 
 tests:
   stage: tests
