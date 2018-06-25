@@ -20,7 +20,7 @@ except ImportError:
 
 _LOGGER = logging.getLogger(__name__)
 
-_MODEL_RANGES = {
+_MODEL_SPECS = {
     "mono": {"color_temp": {"min": 2700, "max": 2700}},
     "mono1": {"color_temp": {"min": 2700, "max": 2700}},
     "color": {"color_temp": {"min": 1700, "max": 6500}},
@@ -622,19 +622,19 @@ class Bulb(object):
         """
         return self.turn_on(power_mode=mode)
 
-    def get_model_ranges(self, **kwargs):
+    def get_model_specs(self, **kwargs):
         """
-        Return ranges (e.g. color temperature min/max) of the bulb.
+        Return the specifications (e.g. color temperature min/max) of the bulb.
         """
-        if self.model is not None and self.model in _MODEL_RANGES:
-            return _MODEL_RANGES[self.model]
+        if self.model is not None and self.model in _MODEL_SPECS:
+            return _MODEL_SPECS[self.model]
 
         _LOGGER.debug("Model unknown (%s). Providing a fallback", self.model)
         if self.bulb_type is BulbType.White:
-            return _MODEL_RANGES["mono"]
+            return _MODEL_SPECS["mono"]
 
         if self.bulb_type is BulbType.WhiteTemp:
-            return _MODEL_RANGES["ceiling1"]
+            return _MODEL_SPECS["ceiling1"]
 
         # BulbType.Color and BulbType.Unknown
-        return _MODEL_RANGES["color"]
+        return _MODEL_SPECS["color"]
