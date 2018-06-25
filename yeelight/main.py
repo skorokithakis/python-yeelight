@@ -513,7 +513,7 @@ class Bulb(object):
 
         self.ensure_on()
 
-        return "start_cf", [flow.count * len(flow.transitions), flow.action.value, flow.expression]
+        return ("start_cf", [flow.count * len(flow.transitions), flow.action.value, flow.expression])
 
     @_command
     def stop_flow(self):
