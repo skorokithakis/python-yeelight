@@ -1,5 +1,4 @@
 import colorsys
-import fcntl
 import json
 import logging
 import socket
@@ -73,67 +72,8 @@ def _command(f, *args, **kw):
     if result:
         return result[0]
 
-
-def get_ip_address(ifname):
-    """
-    Returns the IPv4 address of the requested interface (thanks Martin Konecny, https://stackoverflow.com/a/24196955)
-
-    :param string interface: The interface to get the IPv4 address of.
-
-    :returns: The interface's IPv4 address.
-
-    """
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    return socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack("256s", ifname[:15]))[20:24])  # SIOCGIFADDR
-
-
-def discover_bulbs(timeout=2, interface=False):
-    """
-    Discover all the bulbs in the local network.
-
-    :param int timeout: How many seconds to wait for replies. Discovery will
-                        always take exactly this long to run, as it can't know
-                        when all the bulbs have finished responding.
-
-    :param string interface: The interface that should be used for multicast packets.
-                             Note: it *has* to have a valid IPv4 address. IPv6-only
-                             interfaces are not supported (at the moment).
-                             The default one will be used if this is not specified.
-
-    :returns: A list of dictionaries, containing the ip, port and capabilities
-              of each of the bulbs in the network.
-    """
-    msg = "M-SEARCH * HTTP/1.1\r\n" "ST:wifi_bulb\r\n" 'MAN:"ssdp:discover"\r\n'
-
-    # Set up UDP socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-    s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
-    if interface:
-        s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(get_ip_address(interface)))
-    s.settimeout(timeout)
-    s.sendto(msg.encode(), ("239.255.255.250", 1982))
-
-    bulbs = []
-    bulb_ips = set()
-    while True:
-        try:
-            data, addr = s.recvfrom(65507)
-        except socket.timeout:
-            break
-
-        capabilities = dict([x.strip("\r").split(": ") for x in data.decode().split("\n") if ":" in x])
-        parsed_url = urlparse(capabilities["Location"])
-
-        bulb_ip = (parsed_url.hostname, parsed_url.port)
-        if bulb_ip in bulb_ips:
-            continue
-
-        capabilities = {key: value for key, value in capabilities.items() if key.islower()}
-        bulbs.append({"ip": bulb_ip[0], "port": bulb_ip[1], "capabilities": capabilities})
-        bulb_ips.add(bulb_ip)
-
-    return bulbs
-
+def discover_bulbs():
+    pass
 
 class BulbException(Exception):
     """
