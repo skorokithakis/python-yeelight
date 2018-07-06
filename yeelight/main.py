@@ -103,7 +103,7 @@ def discover_bulbs(timeout=2, interface=False):
     :returns: A list of dictionaries, containing the ip, port and capabilities
               of each of the bulbs in the network.
     """
-    msg = "M-SEARCH * HTTP/1.1\r\n" "ST:wifi_bulb\r\n" 'MAN:"ssdp:discover"\r\n'
+    msg = "\r\n".join(["M-SEARCH * HTTP/1.1", "HOST: 239.255.255.250:1982", 'MAN: "ssdp:discover"', "ST: wifi_bulb"])
 
     # Set up UDP socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
