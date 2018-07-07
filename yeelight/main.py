@@ -257,7 +257,7 @@ class Bulb(object):
         :rtype: yeelight.BulbType
         :return: The bulb's type.
         """
-        if not self._last_properties:
+        if not self._last_properties or any(name not in self.last_properties for name in ["ct", "rgb"]):
             return BulbType.Unknown
         if self.last_properties["rgb"] is None and self.last_properties["ct"]:
             return BulbType.WhiteTemp
