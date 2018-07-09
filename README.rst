@@ -50,6 +50,28 @@ Refer to the rest of `the documentation
 <https://yeelight.readthedocs.io/en/stable/>`_ for more details.
 
 
+Contributing
+------------
+
+If you'd like to contribute to the code, thank you! To install the various libraries
+required, run (preferably in a virtualenv)::
+
+    $ pip install -Ur requirements_dev.txt
+
+In order for your MR to pass CI, it needs to be checked by various utilities, which are
+managed by `pre-commit`. `pre-commit` will be installed by the above command, but you
+also need to install the pre-commit hook::
+
+    $ pre-commit install
+
+The hook will run on commit. To run it manually (e.g. if you've already committed but
+forgot to run it, just run)::
+
+    $ pre-commit run -a
+
+Thanks again!
+
+
 License
 -------
 
