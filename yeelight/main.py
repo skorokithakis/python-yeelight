@@ -1,7 +1,7 @@
 import colorsys
-import fcntl
 import json
 import logging
+import os
 import socket
 import struct
 from enum import Enum
@@ -12,6 +12,12 @@ from .decorator import decorator
 from .enums import PowerMode
 from .flow import Flow
 from .utils import _clamp
+
+if os.name == "nt":
+    import win32api as fcntl
+else:
+    import fcntl
+
 
 try:
     from urllib.parse import urlparse
