@@ -72,7 +72,7 @@ def _command(f, *args, **kw):
         # Add the effect parameters.
         params += [effect, duration]
         # Add power_mode parameter.
-        if method == "set_power" and params[0] == "on":
+        if method == "set_power" and params[0] == "on" and power_mode.value != PowerMode.LAST:
             params += [power_mode.value]
 
     result = self.send_command(method, params).get("result", [])
