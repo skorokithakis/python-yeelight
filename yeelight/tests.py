@@ -82,21 +82,21 @@ class Tests(unittest.TestCase):
     def test_turn_on1(self):
         self.bulb.turn_on()
         self.assertEqual(self.socket.sent["method"], "set_power")
-        self.assertEqual(self.socket.sent["params"], ["on", "smooth", 300, enums.PowerMode.LAST.value])
+        self.assertEqual(self.socket.sent["params"], ["on", "smooth", 300])
 
         self.bulb.turn_on(duration=3000)
-        self.assertEqual(self.socket.sent["params"], ["on", "smooth", 3000, enums.PowerMode.LAST.value])
+        self.assertEqual(self.socket.sent["params"], ["on", "smooth", 3000])
 
     def test_turn_on2(self):
         self.bulb.effect = "sudden"
         self.bulb.turn_on()
         self.assertEqual(self.socket.sent["method"], "set_power")
-        self.assertEqual(self.socket.sent["params"], ["on", "sudden", 300, enums.PowerMode.LAST.value])
+        self.assertEqual(self.socket.sent["params"], ["on", "sudden", 300])
 
     def test_turn_on3(self):
         self.bulb.turn_on(effect="sudden", duration=50)
         self.assertEqual(self.socket.sent["method"], "set_power")
-        self.assertEqual(self.socket.sent["params"], ["on", "sudden", 50, enums.PowerMode.LAST.value])
+        self.assertEqual(self.socket.sent["params"], ["on", "sudden", 50])
 
     def test_turn_on4(self):
         self.bulb.power_mode = enums.PowerMode.MOONLIGHT
@@ -122,7 +122,7 @@ class Tests(unittest.TestCase):
     def test_set_power_mode3(self):
         self.bulb.set_power_mode(enums.PowerMode.LAST)
         self.assertEqual(self.socket.sent["method"], "set_power")
-        self.assertEqual(self.socket.sent["params"], ["on", "smooth", 300, enums.PowerMode.LAST.value])
+        self.assertEqual(self.socket.sent["params"], ["on", "smooth", 300])
 
     def test_color_temp1(self):
         self.bulb.set_color_temp(1400)
