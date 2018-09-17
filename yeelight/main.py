@@ -159,13 +159,15 @@ class BulbType(Enum):
     The bulb's type.
 
     This is either `White` (for monochrome bulbs), `Color` (for color bulbs), `WhiteTemp` (for white bulbs with
-    configurable color temperature), or `Unknown` if the properties have not been fetched yet.
+    configurable color temperature), `WhiteTempMood` for white bulbs with mood lighting (like the Galaxy LED ceiling
+    light), or `Unknown` if the properties have not been fetched yet.
     """
 
     Unknown = -1
     White = 0
     Color = 1
     WhiteTemp = 2
+    WhiteTempMood = 2
 
 
 class Bulb(object):
@@ -268,7 +270,10 @@ class Bulb(object):
         if not self._last_properties or any(name not in self.last_properties for name in ["ct", "rgb"]):
             return BulbType.Unknown
         if self.last_properties["rgb"] is None and self.last_properties["ct"]:
-            return BulbType.WhiteTemp
+            if self.last_properties["bg_power"] is not None:
+                return BulbType.WhiteTempMood
+            else:
+                return BulbType.WhiteTemp
         if all(
             name in self.last_properties and self.last_properties[name] is None for name in ["ct", "rgb", "hue", "sat"]
         ):
@@ -299,6 +304,10 @@ class Bulb(object):
             "flowing",
             "delayoff",
             "music_on",
+            "nl_br",
+            "active_mode",
+            "bg_power",
+            "bg_rgb",
             "name",
         ],
     ):
