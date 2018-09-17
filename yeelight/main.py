@@ -316,6 +316,10 @@ class Bulb(object):
 
         This method also updates ``last_properties`` when it is called.
 
+        The ``current_brightness`` property is calculated by the library (i.e. not returned
+        by the bulb), and indicates the current brightness of the lamp, aware of night light
+        mode. It is 0 if the lamp is off, and None if it is unknown.
+
         :param list requested_properties: The list of properties to request from the bulb.
                                           By default, this does not include ``flow_params``.
 
@@ -332,6 +336,16 @@ class Bulb(object):
         properties = [x if x else None for x in properties]
 
         self._last_properties = dict(zip(requested_properties, properties))
+
+        if self._last_properties.get("power") == "off":
+            cb = "0"
+        elif self._last_properties.get("active_mode") == "1":
+            # Nightlight mode.
+            cb = self._last_properties.get("nl_br")
+        else:
+            cb = self._last_properties.get("bright")
+        self._last_properties["current_brightness"] = cb
+
         return self._last_properties
 
     def send_command(self, method, params=None):
