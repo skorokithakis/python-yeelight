@@ -18,6 +18,9 @@ Description
 ``yeelight`` is a simple library that allows you to control YeeLight WiFi RGB
 LED bulbs through your LAN.
 
+This fork has ``discover_bulbs`` functionality removed in order to work with
+Windows.
+
 
 Installation
 ------------
