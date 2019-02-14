@@ -551,7 +551,7 @@ class Bulb(object):
         """Stop a flow."""
         return "stop_cf", []
 
-    def start_music(self, port=0):
+    def start_music(self, port=0, ip=None):
         """
         Start music mode.
 
@@ -566,6 +566,9 @@ class Bulb(object):
 
         :param int port: The port to listen on. If none is specified, a random
                          port will be chosen.
+
+        :param str ip: The IP address of the host. Will be found automatically
+                         anyway, but useful for Docker or multiple network cards.
         """
         if self._music_mode:
             raise AssertionError("Already in music mode, please stop music mode first.")
@@ -582,6 +585,8 @@ class Bulb(object):
         s.listen(3)
 
         local_ip = self._socket.getsockname()[0]
+        if ip:
+            local_ip = ip
         self.send_command("set_music", [1, local_ip, port])
         s.settimeout(5)
         conn, _ = s.accept()
