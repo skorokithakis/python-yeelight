@@ -16,8 +16,15 @@ if os.name == "nt":
 else:
     import fcntl
 
-from urlparse import urlparse
-from future.utils import raise_from
+try:
+    from urlparse import urlparse
+except Exception:
+    from urllib.parse import urlparse
+
+try:
+    from future.utils import raise_from
+except Exception:
+    pass
 
 _LOGGER = logging.getLogger(__name__)
 
