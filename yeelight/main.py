@@ -6,8 +6,6 @@ import socket
 import struct
 from enum import Enum
 
-from future.utils import raise_from
-
 from .decorator import decorator
 from .enums import PowerMode
 from .flow import Flow
@@ -18,11 +16,8 @@ if os.name == "nt":
 else:
     import fcntl
 
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
+from urlparse import urlparse
+from future.utils import raise_from
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -50,7 +45,11 @@ def _command(f, *args, **kw):
     power_mode = kw.get("power_mode", self.power_mode)
 
     method, params = f(*args, **kw)
-    if method in ["set_ct_abx", "set_rgb", "set_hsv", "set_bright", "set_power", "toggle"]:
+    if "bg_" in method:
+        s = "bg_"
+    else:
+        s = ""
+    if method in [s + "set_ct_abx", s + "set_rgb", s + "set_hsv", s + "set_bright", s + "set_power", s + "toggle"]:
         if self._music_mode:
             # Mapping calls to their properties.
             # Used to keep music mode cache up to date.
@@ -60,10 +59,15 @@ def _command(f, *args, **kw):
                 "set_hsv": ["hue", "sat"],
                 "set_bright": ["bright"],
                 "set_power": ["power"],
+                "bg_set_ct_abx": ["ct"],
+                "bg_set_rgb": ["rgb"],
+                "bg_set_hsv": ["hue", "sat"],
+                "bg_set_bright": ["bright"],
+                "bg_set_power": ["power"],
             }
             # Handle toggling separately, as it depends on a previous power state.
             if method == "toggle":
-                self._last_properties["power"] = "on" if self._last_properties["power"] == "off" else "off"
+                self._last_properties[s + "power"] = "on" if self._last_properties[s + "power"] == "off" else "off"
             elif method in action_property_map:
                 set_prop = action_property_map[method]
                 update_props = {set_prop[prop]: params[prop] for prop in range(len(set_prop))}
@@ -72,7 +76,7 @@ def _command(f, *args, **kw):
         # Add the effect parameters.
         params += [effect, duration]
         # Add power_mode parameter.
-        if method == "set_power" and params[0] == "on" and power_mode.value != PowerMode.LAST:
+        if method == s + "set_power" and params[0] == "on" and power_mode.value != PowerMode.LAST:
             params += [power_mode.value]
 
     result = self.send_command(method, params).get("result", [])
@@ -297,6 +301,10 @@ class Bulb(object):
             "power",
             "bright",
             "ct",
+            "bg_ct",
+            "bg_rgb",
+            "bg_hue",
+            "bg_sat",
             "rgb",
             "hue",
             "sat",
@@ -405,6 +413,7 @@ class Bulb(object):
                     self._last_properties.update(line["params"])
 
         if "error" in response:
+            print(response)
             raise BulbException(response["error"])
 
         return response
@@ -439,6 +448,22 @@ class Bulb(object):
         return "set_rgb", [red * 65536 + green * 256 + blue]
 
     @_command
+    def bg_set_rgb(self, red, green, blue, **kwargs):
+        """
+        Set the bulb's RGB value.
+
+        :param int red: The red value to set (0-255).
+        :param int green: The green value to set (0-255).
+        :param int blue: The blue value to set (0-255).
+        """
+        self.ensure_on()
+
+        red = _clamp(red, 0, 255)
+        green = _clamp(green, 0, 255)
+        blue = _clamp(blue, 0, 255)
+        return "bg_set_rgb", [red * 65536 + green * 256 + blue]
+
+    @_command
     def set_adjust(self, action, prop, **kwargs):
         """
         Adjust a parameter.
@@ -455,6 +480,24 @@ class Bulb(object):
                            "circle". Why? Who knows.
         """
         return "set_adjust", [action, prop]
+
+    @_command
+    def bg_set_adjust(self, action, prop, **kwargs):
+        """
+        Adjust a parameter.
+
+        I don't know what this is good for. I don't know how to use it, or why.
+        I'm just including it here for completeness, and because it was easy,
+        but it won't get any particular love.
+
+        :param str action: The direction of adjustment. Can be "increase",
+                           "decrease" or "circle".
+        :param str prop:   The property to adjust. Can be "bright" for
+                           brightness, "ct" for color temperature and "color"
+                           for color. The only action for "color" can be
+                           "circle". Why? Who knows.
+        """
+        return "bg_set_adjust", [action, prop]
 
     @_command
     def set_hsv(self, hue, saturation, value=None, **kwargs):
@@ -492,6 +535,41 @@ class Bulb(object):
             return "start_cf", [1, 1, "%s, 1, %s, %s" % (duration, rgb, value)]
 
     @_command
+    def bg_set_hsv(self, hue, saturation, value=None, **kwargs):
+        """
+        Set the bulb's HSV value.
+
+        :param int hue:        The hue to set (0-359).
+        :param int saturation: The saturation to set (0-100).
+        :param int value:      The value to set (0-100). If omitted, the bulb's
+                               brightness will remain the same as before the
+                               change.
+        """
+        self.ensure_on()
+
+        # We fake this using flow so we can add the `value` parameter.
+        hue = _clamp(hue, 0, 359)
+        saturation = _clamp(saturation, 0, 100)
+
+        if value is None:
+            # If no value was passed, use ``set_hsv`` to preserve luminance.
+            return "bg_set_hsv", [hue, saturation]
+        else:
+            # Otherwise, use flow.
+            value = _clamp(value, 0, 100)
+
+            if kwargs.get("effect", self.effect) == "sudden":
+                duration = 50
+            else:
+                duration = kwargs.get("duration", self.duration)
+
+            hue = _clamp(hue, 0, 359) / 359.0
+            saturation = _clamp(saturation, 0, 100) / 100.0
+            red, green, blue = [int(round(col * 255)) for col in colorsys.hsv_to_rgb(hue, saturation, 1)]
+            rgb = red * 65536 + green * 256 + blue
+            return "bg_start_cf", [1, 1, "%s, 1, %s, %s" % (duration, rgb, value)]
+
+    @_command
     def set_brightness(self, brightness, **kwargs):
         """
         Set the bulb's brightness.
@@ -504,7 +582,24 @@ class Bulb(object):
         return "set_bright", [brightness]
 
     @_command
+    def bg_set_brightness(self, brightness, **kwargs):
+        """
+        Set the bulb's brightness.
+
+        :param int brightness: The brightness value to set (1-100).
+        """
+        self.ensure_on()
+
+        brightness = _clamp(brightness, 1, 100)
+        return "bg_set_bright", [brightness]
+
+    @_command
     def turn_on(self, **kwargs):
+        """Turn the bulb on."""
+        return "set_power", ["on"]
+
+    @_command
+    def bg_turn_on(self, **kwargs):
         """Turn the bulb on."""
         return "set_power", ["on"]
 
@@ -514,9 +609,19 @@ class Bulb(object):
         return "set_power", ["off"]
 
     @_command
+    def bg_turn_off(self, **kwargs):
+        """Turn the bulb off."""
+        return "bgset_power", ["off"]
+
+    @_command
     def toggle(self, **kwargs):
         """Toggle the bulb on or off."""
         return "toggle", []
+
+    @_command
+    def bg_toggle(self, **kwargs):
+        """Toggle the bulb on or off."""
+        return "bg_toggle", []
 
     @_command
     def set_default(self):
