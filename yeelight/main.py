@@ -608,7 +608,7 @@ class Bulb(object):
     @_command
     def bg_turn_on(self, **kwargs):
         """Turn the bulb on."""
-        return "set_power", ["on"]
+        return "bg_set_power", ["on"]
 
     @_command
     def turn_off(self, **kwargs):
@@ -618,7 +618,7 @@ class Bulb(object):
     @_command
     def bg_turn_off(self, **kwargs):
         """Turn the bulb off."""
-        return "bgset_power", ["off"]
+        return "bg_set_power", ["off"]
 
     @_command
     def toggle(self, **kwargs):
